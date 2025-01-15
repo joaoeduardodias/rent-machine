@@ -1,5 +1,7 @@
+import { Facebook, Instagram, Linkedin } from "lucide-react";
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import Link from "next/link";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -23,11 +25,87 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html
+      lang="pt-BR"
+      suppressHydrationWarning
+      style={{ scrollBehavior: "smooth" }}
+    >
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
+        <header className="bg-yellow-500 p-4 sticky top-0 z-10">
+          <div className="container mx-auto flex justify-between items-center">
+            <Link
+              href="/"
+              className="text-2xl font-bold text-white  cursor-pointer"
+            >
+              ConstrutAluga
+            </Link>
+            <nav>
+              <ul className="flex space-x-4">
+                <li>
+                  <a href="#about" className="text-white hover:text-yellow-200">
+                    Sobre
+                  </a>
+                </li>
+                <li>
+                  <a
+                    href="#maquinas"
+                    className="text-white hover:text-yellow-200"
+                  >
+                    Máquinas
+                  </a>
+                </li>
+                <li>
+                  <a
+                    href="#servicos"
+                    className="text-white hover:text-yellow-200"
+                  >
+                    Serviços
+                  </a>
+                </li>
+                <li>
+                  <a
+                    href="#contato"
+                    className="text-white hover:text-yellow-200"
+                  >
+                    Contato
+                  </a>
+                </li>
+              </ul>
+            </nav>
+          </div>
+        </header>
         {children}
+        <footer className="bg-gray-800 text-white py-16">
+          <div className="container  px-4 flex flex-wrap justify-center gap-16 items-start">
+            <div className="w-full  md:max-w-72 mb-6 md:mb-0">
+              <h5 className="text-xl font-bold mb-4">ConstrutAluga</h5>
+              <p className="text-gray-400">
+                Soluções de aluguel para sua construção.
+              </p>
+            </div>
+            <div className="w-full md:max-w-72 mb-6 md:mb-0">
+              <h5 className="text-xl font-bold mb-4">Contato</h5>
+              <p className="text-gray-400">Email: contato@construtaluga.com</p>
+              <p className="text-gray-400">Telefone: (11) 1234-5678</p>
+            </div>
+            <div className="w-full md:max-w-60">
+              <h5 className="text-xl font-bold mb-4">Redes Sociais</h5>
+              <div className="flex space-x-4">
+                <a href="#" className="text-gray-400 hover:text-white">
+                  <Facebook className="w-5 h-5" />
+                </a>
+                <a href="#" className="text-gray-400 hover:text-white">
+                  <Instagram className="w-5 h-5" />
+                </a>
+                <a href="#" className="text-gray-400 hover:text-white">
+                  <Linkedin className="w-5 h-5" />
+                </a>
+              </div>
+            </div>
+          </div>
+        </footer>
       </body>
     </html>
   );
