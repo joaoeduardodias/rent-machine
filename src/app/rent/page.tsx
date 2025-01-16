@@ -1,12 +1,14 @@
 "use client";
 
+import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
+import { useRentMachine } from "@/hooks/use-rent-machine";
 import { cn } from "@/lib/utils";
 import { addDays, format, startOfToday } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { ArrowRight, ChevronDown } from "lucide-react";
-import Link from "next/link";
-import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 import { DateRange } from "react-day-picker";
 
 const maquinas = [
@@ -17,66 +19,34 @@ const maquinas = [
 ];
 
 export default function Alugar() {
-  const [maquinaSelecionada, setMaquinaSelecionada] = useState("");
+  const { currentMachine, setCurrentMachine } = useRentMachine();
+  const router = useRouter();
   const [date, setDate] = useState<DateRange | undefined>({
     from: new Date(),
     to: addDays(new Date(), 7),
   });
 
-  const calcularTotal = () => {
-    if (!maquinaSelecionada || !date?.from || !date?.to) return 0;
-    const maquina = maquinas.find((m) => m.id === parseInt(maquinaSelecionada));
-    const dias =
-      Math.ceil(
-        (date.to.getTime() - date.from.getTime()) / (1000 * 60 * 60 * 24)
-      ) + 1;
-    return maquina ? maquina.preco * dias : 0;
-  };
+  // const calcularTotal = () => {
+  //   if (!currentMachine || !date?.from || !date?.to) return 0;
+  //   const maquina = maquinas.find((m) => m.id === parseInt(currentMachine));
+  //   const dias =
+  //     Math.ceil(
+  //       (date.to.getTime() - date.from.getTime()) / (1000 * 60 * 60 * 24)
+  //     ) + 1;
+  //   return maquina ? maquina.preco * dias : 0;
+  // };
+
+  useEffect(() => {
+    setDate(undefined);
+  }, []);
+  useEffect(() => {
+    if (!currentMachine) {
+      setDate(undefined);
+    }
+  }, [currentMachine]);
 
   return (
     <div className="min-h-screen bg-yellow-50">
-      <header className="bg-yellow-500 p-4 sticky top-0 z-10">
-        <div className="container mx-auto flex justify-between items-center">
-          <h1 className="text-2xl font-bold text-white">ConstrutAluga</h1>
-          <nav>
-            <ul className="flex space-x-4">
-              <li>
-                <Link
-                  href="/#sobre"
-                  className="text-white hover:text-yellow-200"
-                >
-                  Sobre
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/#maquinas"
-                  className="text-white hover:text-yellow-200"
-                >
-                  Máquinas
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/#servicos"
-                  className="text-white hover:text-yellow-200"
-                >
-                  Serviços
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/#contato"
-                  className="text-white hover:text-yellow-200"
-                >
-                  Contato
-                </Link>
-              </li>
-            </ul>
-          </nav>
-        </div>
-      </header>
-
       <main>
         <section className="py-20 bg-white">
           <div className="container mx-auto px-4">
@@ -94,14 +64,14 @@ export default function Alugar() {
                 <div className="relative">
                   <select
                     id="maquina"
-                    value={maquinaSelecionada}
-                    onChange={(e) => setMaquinaSelecionada(e.target.value)}
+                    value={currentMachine}
+                    onChange={(e) => setCurrentMachine(e.target.value)}
                     className="block appearance-none w-full bg-white border border-yellow-300 text-gray-700 py-3 px-4 pr-8 rounded-lg leading-tight focus:outline-none focus:bg-white focus:border-yellow-500 transition duration-300"
                   >
                     <option value="">Escolha uma máquina</option>
                     {maquinas.map((maquina) => (
                       <option key={maquina.id} value={maquina.id}>
-                        {maquina.nome} - R$ {maquina.preco}/dia
+                        {maquina.nome}
                       </option>
                     ))}
                   </select>
@@ -121,20 +91,15 @@ export default function Alugar() {
                   onSelect={setDate}
                   numberOfMonths={2}
                   className={cn("w-full flex items-center justify-center")}
-                  disabled={(date) => date < startOfToday()}
+                  disabled={(date) => {
+                    return !currentMachine || date < startOfToday();
+                  }}
                   locale={ptBR}
                   classNames={{
                     months: "flex gap-4",
                     month: "border border-amber-500 rounded-lg bg-amber-50 p-6",
-                    day: "size-12  rounded-lg hover:bg-amber-500 transition-colors duration-200",
                     head_cell:
-                      "font-ligh text-sm px-3 text-muted-foreground mt-1",
-                    day_selected: "bg-amber-500 rounded-e-none text-white", // Dia selecionado
-                    day_range_start: "bg-amber-500 text-white", // Início do intervalo
-                    day_range_middle:
-                      "bg-amber-300/80 rounded-none text-amber-600", // Meio do intervalo
-                    day_range_end:
-                      "bg-amber-500 rounded-s-none rounded-e-lg text-white", // Fim do intervalo
+                      "font-light text-sm px-[13px] text-muted-foreground mt-1",
                   }}
                 />
 
@@ -148,52 +113,23 @@ export default function Alugar() {
                   </p>
                 )}
               </div>
-              <div className="mb-8">
+              {/* <div className="mb-8">
                 <p className="text-2xl font-bold text-gray-800">
                   Total: R$ {calcularTotal()}
                 </p>
-              </div>
-              <button
-                onClick={() => alert("Reserva confirmada!")}
-                className="w-full bg-yellow-500 text-white font-bold py-3 px-6 rounded-lg inline-flex items-center justify-center hover:bg-yellow-600 transition duration-300"
+              </div> */}
+              <Button
+                onClick={() => router.push("/confirm-rent")}
+                className="w-full text-white py-6 disabled:cursor-not-allowed"
+                disabled={!currentMachine}
               >
                 Confirmar Reserva
                 <ArrowRight className="ml-2" />
-              </button>
+              </Button>
             </div>
           </div>
         </section>
       </main>
-
-      <footer className="bg-gray-800 text-white p-8">
-        <div className="container mx-auto px-4 flex flex-wrap justify-between">
-          <div className="w-full md:w-1/3 mb-6 md:mb-0">
-            <h5 className="text-xl font-bold mb-4">ConstrutAluga</h5>
-            <p className="text-gray-400">
-              Soluções de aluguel para sua construção.
-            </p>
-          </div>
-          <div className="w-full md:w-1/3 mb-6 md:mb-0">
-            <h5 className="text-xl font-bold mb-4">Contato</h5>
-            <p className="text-gray-400">Email: contato@construtaluga.com</p>
-            <p className="text-gray-400">Telefone: (11) 1234-5678</p>
-          </div>
-          <div className="w-full md:w-1/3">
-            <h5 className="text-xl font-bold mb-4">Redes Sociais</h5>
-            <div className="flex space-x-4">
-              <a href="#" className="text-gray-400 hover:text-white">
-                Facebook
-              </a>
-              <a href="#" className="text-gray-400 hover:text-white">
-                Instagram
-              </a>
-              <a href="#" className="text-gray-400 hover:text-white">
-                LinkedIn
-              </a>
-            </div>
-          </div>
-        </div>
-      </footer>
     </div>
   );
 }
