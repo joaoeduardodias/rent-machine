@@ -42,11 +42,11 @@ export default function Contact() {
   } = useForm<FormData>({
     defaultValues: {
       telefone: "",
+      parcelas: 1,
     },
   });
 
   const paymentMethod = watch("meioPagamento");
-  // const [telefone, setTelefone] = useState("");
   const telefoneMask = useMaskito({
     options: {
       mask: [
