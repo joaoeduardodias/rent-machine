@@ -28,25 +28,25 @@ const machines = [
 export default function Home() {
   return (
     <main className="min-h-screen bg-yellow-50">
-      <section className="bg-yellow-400/70 py-20">
+      <section className="bg-yellow-400/70 pt-20 md:py-20">
         <div className="container mx-auto px-4">
           <div className="flex flex-col md:flex-row items-center justify-between">
             <div className="md:w-1/2 mb-8 md:mb-0">
-              <h2 className="text-4xl md:text-5xl font-bold mb-4 text-gray-800">
+              <h2 className="text-center md:text-left text-4xl md:text-5xl font-bold mb-4 text-gray-800">
                 Alugue Máquinas de Construção com Facilidade
               </h2>
-              <p className="text-xl mb-8 text-gray-700">
+              <p className="text-xl text-center md:text-left mb-8 text-gray-700">
                 Equipamentos de qualidade para sua obra, quando você precisar.
               </p>
               <Link
                 href="/rent"
-                className="bg-yellow-500 text-white font-bold py-3 px-6 rounded-full inline-flex items-center hover:bg-yellow-600 transition duration-300"
+                className="bg-yellow-500 text-white font-bold py-3 px-6 rounded-full flex md:inline-flex items-center justify-center hover:bg-yellow-600 transition duration-300"
               >
                 Alugar Agora
                 <ArrowRight className="ml-2" />
               </Link>
             </div>
-            <div className="md:w-1/2">
+            <div className="hidden md:inline-block md:w-1/2">
               <Image
                 src={imgEscavadeira}
                 alt="ilustração escavadeira"
@@ -60,7 +60,7 @@ export default function Home() {
         </div>
       </section>
 
-      <section id="about" className="py-20 bg-white">
+      <section id="about" className="py-8 md:py-20 bg-white">
         <div className="container mx-auto px-4">
           <h3 className="text-3xl font-bold text-foreground mb-8 text-center">
             Sobre a RentMachine
@@ -76,13 +76,13 @@ export default function Home() {
               />
             </div>
             <div className="md:w-1/2 md:pl-8">
-              <p className="text-lg text-muted-foreground mb-4 text-justify">
+              <p className="text-lg text-muted-foreground mb-4 text-center md:text-justify">
                 A RentMachine é líder no mercado de aluguel de máquinas para
                 construção civil. Com anos de experiência, oferecemos
                 equipamentos de alta qualidade e um serviço excepcional para
                 garantir o sucesso do seu projeto.
               </p>
-              <p className="text-lg text-muted-foreground">
+              <p className="text-lg text-center md:text-left text-muted-foreground">
                 Nossa missão é simplificar o processo de aluguel de máquinas,
                 proporcionando flexibilidade e eficiência para construtoras de
                 todos os tamanhos.
@@ -111,7 +111,7 @@ export default function Home() {
                   alt={machine.name}
                   width={400}
                   height={300}
-                  className="w-full h-48 object-contain p-2"
+                  className="w-full h-40 md:h-48 object-contain p-2"
                 />
                 <div className="p-4">
                   <h4 className="text-xl font-semibold mb-2">{machine.name}</h4>
@@ -184,22 +184,24 @@ export default function Home() {
               />
             </div>
             <div className="md:w-1/2 md:pl-8">
-              <p className="text-lg text-gray-600 mb-4 text-left ">
+              <p className="text-lg text-center md:text-left text-muted-foreground mb-4">
                 Estamos aqui para ajudar!
                 <br /> Entre em contato conosco para tirar dúvidas, solicitar
                 orçamentos ou agendar uma visita.
               </p>
-              <div className="flex items-center mb-4">
-                <Phone className="w-6 h-6 text-yellow-500 mr-2" />
-                <span className="text-lg">(67) 99890-8771</span>
+              <div className="flex items-center justify-center md:justify-start mb-4">
+                <Phone className="size-6 text-yellow-500 mr-2" />
+                <span className="text-base md:text-lg text-gray-600 md:text-gray-800">
+                  (67) 99890-8771
+                </span>
               </div>
-              <p className="text-lg text-gray-600 mb-4">
+              <p className="text-base text-center md:text-lg md:text-left text-gray-600 mb-4">
                 Ou envie-nos uma mensagem:
               </p>
               <Link
                 href="https://wa.me/5567998908771?text=ol%C3%A1%2C%20gostaria%20de%20saber%20mais%20sobre%20como%20funciona%20para%20alugar%20uma%20m%C3%A1quina"
                 target="_blank"
-                className="bg-yellow-500 text-white font-bold py-3 px-6 rounded-full inline-flex items-center hover:bg-yellow-600 transition duration-300"
+                className="bg-yellow-500 text-white font-bold py-3 px-6 rounded-full flex md:inline-flex items-center justify-center hover:bg-yellow-600 transition duration-300"
               >
                 Enviar Mensagem
               </Link>

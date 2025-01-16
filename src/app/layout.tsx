@@ -1,5 +1,13 @@
+import { Button } from "@/components/ui/button";
+import {
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet";
 import { RentMachineProvider } from "@/context/rent-machine";
-import { Facebook, Instagram, Linkedin } from "lucide-react";
+import { Facebook, Instagram, Linkedin, Menu } from "lucide-react";
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import Link from "next/link";
@@ -46,7 +54,7 @@ export default function RootLayout({
                 Rent Machine
               </Link>
               <nav>
-                <ul className="flex space-x-4">
+                <ul className="hidden md:flex space-x-4">
                   <li>
                     <Link
                       href="/#about"
@@ -80,6 +88,61 @@ export default function RootLayout({
                     </Link>
                   </li>
                 </ul>
+                <Sheet>
+                  <SheetTrigger asChild>
+                    <Button
+                      size="icon"
+                      variant="ghost"
+                      className="md:hidden m-0 p-0"
+                    >
+                      <Menu className="!size-6 text-white" />
+                      <span className="sr-only">Abrir/fechar menu</span>
+                    </Button>
+                  </SheetTrigger>
+                  <SheetContent
+                    side="right"
+                    className="sm:max-w-72 flex items-center justify-center border-yellow-300 bg-yellow-500"
+                  >
+                    <SheetTitle className="sr-only">Menu</SheetTitle>
+                    <SheetDescription className="sr-only">
+                      Menu
+                    </SheetDescription>
+                    <ul className="space-y-4 text-2xl flex items-center justify-center flex-col">
+                      <li>
+                        <Link
+                          href="/#about"
+                          className="text-white hover:text-yellow-200"
+                        >
+                          Sobre
+                        </Link>
+                      </li>
+                      <li>
+                        <Link
+                          href="/#maquinas"
+                          className="text-white hover:text-yellow-200"
+                        >
+                          Máquinas
+                        </Link>
+                      </li>
+                      <li>
+                        <Link
+                          href="/#servicos"
+                          className="text-white hover:text-yellow-200"
+                        >
+                          Serviços
+                        </Link>
+                      </li>
+                      <li>
+                        <Link
+                          href="/#contato"
+                          className="text-white hover:text-yellow-200"
+                        >
+                          Contato
+                        </Link>
+                      </li>
+                    </ul>
+                  </SheetContent>
+                </Sheet>
               </nav>
             </div>
           </header>
