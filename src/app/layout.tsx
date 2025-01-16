@@ -65,7 +65,7 @@ export default function RootLayout({
                   </li>
                   <li>
                     <Link
-                      href="/#maquinas"
+                      href="/#machines"
                       className="text-white hover:text-yellow-200"
                     >
                       Máquinas
@@ -73,7 +73,7 @@ export default function RootLayout({
                   </li>
                   <li>
                     <Link
-                      href="/#servicos"
+                      href="/#services"
                       className="text-white hover:text-yellow-200"
                     >
                       Serviços
@@ -81,7 +81,7 @@ export default function RootLayout({
                   </li>
                   <li>
                     <Link
-                      href="/#contato"
+                      href="/#contact"
                       className="text-white hover:text-yellow-200"
                     >
                       Contato
@@ -118,7 +118,7 @@ export default function RootLayout({
                       </li>
                       <li>
                         <Link
-                          href="/#maquinas"
+                          href="/#machines"
                           className="text-white hover:text-yellow-200"
                         >
                           Máquinas
@@ -126,7 +126,7 @@ export default function RootLayout({
                       </li>
                       <li>
                         <Link
-                          href="/#servicos"
+                          href="/#services"
                           className="text-white hover:text-yellow-200"
                         >
                           Serviços
@@ -134,7 +134,7 @@ export default function RootLayout({
                       </li>
                       <li>
                         <Link
-                          href="/#contato"
+                          href="/#contact"
                           className="text-white hover:text-yellow-200"
                         >
                           Contato
