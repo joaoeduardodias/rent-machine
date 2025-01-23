@@ -3,6 +3,8 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { useQueryClient } from "@tanstack/react-query";
+import { Loader2 } from "lucide-react";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
@@ -16,11 +18,13 @@ type FormData = {
 };
 
 export function FormCreateMachine() {
-  // const [machines, setMachines] = useState<Machine[]>([]);
+  const queryClient = useQueryClient();
+  const [isLoading, setIsLoading] = useState(false);
   const [previewImage, setPreviewImage] = useState<string | null>(null);
   const { register, handleSubmit, control, reset, watch } = useForm<FormData>();
   const watchimage = watch("image");
 
+  // preview image
   useEffect(() => {
     if (watchimage && watchimage.length > 0) {
       const file = watchimage[0];
@@ -35,6 +39,7 @@ export function FormCreateMachine() {
   }, [watchimage]);
 
   async function onSubmit(data: FormData) {
+    setIsLoading(true);
     try {
       if (!data.image || data.image.length === 0) {
         toast.error("Por favor, selecione uma imagem.");
@@ -59,26 +64,11 @@ export function FormCreateMachine() {
         throw new Error(result.error || "Erro ao criar máquina");
       }
 
-      // const signedUrl = result.signedUrl;
-
-      // if (!responseUpload.ok) {
-      //   throw new Error(result.error || "Erro ao Fazer upload");
-      // }
-
-      // const newMachine: Machine = {
-      //   id: Date.now(),
-      //   name: data.name,
-      //   price: Number(data.price),
-      //   image: result.imgUrl,
-      // };
-
-      // const updatedMachines = [...machines, newMachine];
-      // setMachines(updatedMachines);
-      // localStorage.setItem("machines", JSON.stringify(updatedMachines));
       reset();
       setPreviewImage(null);
-
+      setIsLoading(false);
       toast.success("Máquina adicionada com sucesso.");
+      queryClient.invalidateQueries({ queryKey: ["list-machines"] });
     } catch (error) {
       console.error("Erro no upload:", error);
       toast.error("Erro ao adicionar a máquina.");
@@ -178,7 +168,13 @@ export function FormCreateMachine() {
         />
       </div>
 
-      <Button type="submit">Adicionar Máquina</Button>
+      <Button type="submit" disabled={isLoading} className="min-w-44">
+        {isLoading ? (
+          <Loader2 className="animate-spin" />
+        ) : (
+          " Adicionar Máquina"
+        )}
+      </Button>
     </form>
   );
 }

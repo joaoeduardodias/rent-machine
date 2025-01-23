@@ -1,4 +1,5 @@
 import { RentMachineProvider } from "@/context/rent-machine";
+import { ReactQueryProvider } from "@/providers/react-query-provider";
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { Toaster } from "sonner";
@@ -33,10 +34,12 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <RentMachineProvider>
-          <Toaster richColors expand position="top-center" />
-           {children}
-        </RentMachineProvider>
+        <ReactQueryProvider>
+          <RentMachineProvider>
+            <Toaster richColors expand position="top-center" />
+            {children}
+          </RentMachineProvider>
+        </ReactQueryProvider>
       </body>
     </html>
   );
