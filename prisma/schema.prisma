@@ -1,0 +1,18 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Machine {
+  id            String @id @default(cuid())
+  name          String
+  price_per_day Float
+  price_per_km  Float
+  img_src       String
+
+  @@map("machines")
+}

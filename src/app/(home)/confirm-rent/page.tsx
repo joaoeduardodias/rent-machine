@@ -48,27 +48,6 @@ export default function Contact() {
   });
   const registerWithMask = useHookFormMask(register);
   const paymentMethod = watch("meioPagamento");
-  // const telefoneMask = useMaskito({
-  //   options: {
-  //     mask: [
-  //       "(",
-  //       /\d/,
-  //       /\d/,
-  //       ")",
-  //       " ",
-  //       /\d/,
-  //       /\d/,
-  //       /\d/,
-  //       /\d/,
-  //       /\d/,
-  //       "-",
-  //       /\d/,
-  //       /\d/,
-  //       /\d/,
-  //       /\d/,
-  //     ],
-  //   },
-  // });
 
   function onSubmit(data: FormData) {
     console.log(data, "Maquina: " + currentMachine);
