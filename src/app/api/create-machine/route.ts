@@ -55,6 +55,7 @@ export async function POST(request: NextRequest) {
     await prisma.machine.create({
       data: {
         name,
+        fileKey,
         price_per_day: Number(price_per_day),
         price_per_km: Number(price_per_km),
         img_src: imgUrl,
