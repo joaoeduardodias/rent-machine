@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { ModalsProvider } from "@/context/modal-context";
-import { Home, Image as ImageIcon, LogOut, Truck } from "lucide-react";
+import { Home, LogOut, Truck } from "lucide-react";
 import Link from "next/link";
 
 const sidebarNavItems = [
@@ -13,11 +13,6 @@ const sidebarNavItems = [
     title: "Máquinas",
     href: "/dash/machines",
     icon: <Truck className="mr-2 h-4 w-4" />,
-  },
-  {
-    title: "Imagens",
-    href: "/dash/images",
-    icon: <ImageIcon className="mr-2 h-4 w-4" />,
   },
 ];
 

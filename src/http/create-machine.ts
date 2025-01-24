@@ -1,23 +1,19 @@
-import { toast } from "sonner";
-
 interface CreateMachineRequest {
   name: string;
   quantity: number;
   image?: FileList;
-  // price_per_day: number;
-  // price_per_km: number;
 }
 
 export async function createMachine({
   name,
   quantity,
   image,
-}: // price_per_day,
-// price_per_km,
-CreateMachineRequest): Promise<void> {
+}: CreateMachineRequest): Promise<void> {
   if (!image || image.length === 0) {
-    toast.error("Por favor, selecione uma imagem.");
-    return;
+    return Promise.reject({
+      status: 400,
+      message: "Missing image",
+    });
   }
 
   const imageFile = image[0];
@@ -25,8 +21,6 @@ CreateMachineRequest): Promise<void> {
   formData.append("name", name);
   formData.append("quantity", String(quantity));
   formData.append("image", imageFile);
-  // formData.append("price_per_day", String(data.price_per_day));
-  // formData.append("price_per_km", String(data.price_per_km));
 
   const response = await fetch("/api/create-machine", {
     method: "POST",

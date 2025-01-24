@@ -8,6 +8,7 @@ const envSchema = z.object({
   CLOUDFARE_ACCESS_KEY_ID: z.string(),
   CLOUDFARE_SECRET_ACCESS_KEY: z.string(),
   CLOUDFARE_DOMAIN_PUBLIC: z.string().url(),
+  NEXTAUTH_URL: z.string().url(),
 });
 
 export const env = envSchema.parse(process.env);

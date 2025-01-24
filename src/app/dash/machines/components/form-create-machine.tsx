@@ -110,6 +110,7 @@ export function FormCreateMachine() {
         <Controller
           name="image"
           control={control}
+          rules={{ required: { value: true, message: "Selecione uma imagem" } }}
           defaultValue={null as unknown as FileList}
           render={({ field }) => (
             <>
@@ -149,13 +150,12 @@ export function FormCreateMachine() {
             </>
           )}
         />
-        {errors.image?.message && (
-          <p className="text-red-500 text-sm font-light">
-            {errors.image?.message}
-          </p>
-        )}
       </div>
-
+      {errors.image?.message && (
+        <p className="text-red-500 text-sm font-light !mt-0">
+          {errors.image?.message}
+        </p>
+      )}
       <Button
         type="submit"
         disabled={createMachineMutation.isPending}
