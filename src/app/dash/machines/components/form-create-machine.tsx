@@ -105,50 +105,6 @@ export function FormCreateMachine() {
             </p>
           )}
         </div>
-        {/* <div className="w-full lg:flex-1">
-          <Label htmlFor="price_per_day" className="font-medium text-gray-700">
-            Preço por Dia (R$)
-          </Label>
-          <Input
-            id="price_per_day"
-            type="number"
-            {...register("price_per_day", {
-              required: "O preço é obrigatório",
-              min: {
-                message: "O preço deve ser maior que 0.",
-                value: 0,
-              },
-            })}
-            className="mt-1 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none hover:border-ring"
-          />
-          {errors.price_per_day?.message && (
-            <p className="text-red-500 text-sm font-light">
-              {errors.price_per_day?.message}
-            </p>
-          )}
-        </div> */}
-        {/* <div className="w-full lg:flex-1">
-          <Label htmlFor="price_per_km" className="font-medium text-gray-700">
-            Preço por Km (R$)
-          </Label>
-          <Input
-            id="price_per_km"
-            type="number"
-            {...register("price_per_km", {
-              required: "O preço é obrigatório",
-              min: {
-                message: "O preço deve ser maior que 0.",
-                value: 0,
-              },
-            })}
-            className="mt-1 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none hover:border-ring"
-          />
-          {errors.price_per_km?.message && (
-            <p className="text-red-500 text-sm font-light">
-              {errors.price_per_km?.message}
-            </p>
-          )}
-        </div> */}
       </div>
       <div className="flex-1 flex flex-col items-center justify-center gap-4 p-4 relative border rounded-md border-gray-300">
         <Controller
