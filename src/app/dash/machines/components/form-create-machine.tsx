@@ -3,7 +3,8 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { useQueryClient } from "@tanstack/react-query";
+import { createMachine } from "@/http/create-machine";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Loader2 } from "lucide-react";
 import Image from "next/image";
 import { useEffect, useState } from "react";
@@ -12,16 +13,21 @@ import { toast } from "sonner";
 
 type FormData = {
   name: string;
-  price_per_day: number;
-  price_per_km: number;
+  quantity: number;
   image: FileList;
 };
 
 export function FormCreateMachine() {
   const queryClient = useQueryClient();
-  const [isLoading, setIsLoading] = useState(false);
   const [previewImage, setPreviewImage] = useState<string | null>(null);
-  const { register, handleSubmit, control, reset, watch } = useForm<FormData>();
+  const {
+    register,
+    handleSubmit,
+    control,
+    reset,
+    watch,
+    formState: { errors },
+  } = useForm<FormData>();
   const watchimage = watch("image");
 
   // preview image
@@ -38,45 +44,29 @@ export function FormCreateMachine() {
     }
   }, [watchimage]);
 
-  async function onSubmit(data: FormData) {
-    setIsLoading(true);
-    try {
-      if (!data.image || data.image.length === 0) {
-        toast.error("Por favor, selecione uma imagem.");
-        return;
-      }
-
-      const imageFile = data.image[0];
-      const formData = new FormData();
-      formData.append("name", data.name);
-      formData.append("price_per_day", String(data.price_per_day));
-      formData.append("price_per_km", String(data.price_per_km));
-      formData.append("image", imageFile);
-
-      const response = await fetch("/api/create-machine", {
-        method: "POST",
-        body: formData,
-      });
-
-      const result = await response.json();
-
-      if (!response.ok) {
-        throw new Error(result.error || "Erro ao criar máquina");
-      }
-
-      reset();
-      setPreviewImage(null);
-      setIsLoading(false);
-      toast.success("Máquina adicionada com sucesso.");
+  const createMachineMutation = useMutation({
+    mutationFn: createMachine,
+    mutationKey: ["create-machine"],
+    onSuccess: async () => {
+      toast.success("Máquina criada com sucesso");
       queryClient.invalidateQueries({ queryKey: ["list-machines"] });
-    } catch (error) {
-      console.error("Erro no upload:", error);
-      toast.error("Erro ao adicionar a máquina.");
-    }
+      reset();
+    },
+    onError: () => {
+      toast.error("Erro encontrado, por favor tente novamente.");
+    },
+  });
+
+  async function handleCreateMachine(data: FormData) {
+    createMachineMutation.mutateAsync({
+      name: data.name,
+      quantity: data.quantity,
+      image: data.image,
+    });
   }
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+    <form onSubmit={handleSubmit(handleCreateMachine)} className="space-y-4">
       <div className="flex gap-2 w-full flex-wrap">
         <div className="w-full lg:flex-1">
           <Label htmlFor="name" className="font-medium text-gray-700">
@@ -87,8 +77,35 @@ export function FormCreateMachine() {
             {...register("name", { required: "Nome é obrigatório" })}
             className="mt-1 hover:border-ring"
           />
+          {errors.name?.message && (
+            <p className="text-red-500 text-sm font-light">
+              {errors.name?.message}
+            </p>
+          )}
         </div>
         <div className="w-full lg:flex-1">
+          <Label htmlFor="quantity" className="font-medium text-gray-700">
+            Quantidade
+          </Label>
+          <Input
+            id="quantity"
+            type="number"
+            {...register("quantity", {
+              required: "Defina a quantidade disponível",
+              min: {
+                message: "A quantidade deve ser maior que 0.",
+                value: 0,
+              },
+            })}
+            className="mt-1 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none hover:border-ring"
+          />
+          {errors.quantity?.message && (
+            <p className="text-red-500 text-sm font-light">
+              {errors.quantity?.message}
+            </p>
+          )}
+        </div>
+        {/* <div className="w-full lg:flex-1">
           <Label htmlFor="price_per_day" className="font-medium text-gray-700">
             Preço por Dia (R$)
           </Label>
@@ -104,8 +121,13 @@ export function FormCreateMachine() {
             })}
             className="mt-1 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none hover:border-ring"
           />
-        </div>
-        <div className="w-full lg:flex-1">
+          {errors.price_per_day?.message && (
+            <p className="text-red-500 text-sm font-light">
+              {errors.price_per_day?.message}
+            </p>
+          )}
+        </div> */}
+        {/* <div className="w-full lg:flex-1">
           <Label htmlFor="price_per_km" className="font-medium text-gray-700">
             Preço por Km (R$)
           </Label>
@@ -121,7 +143,12 @@ export function FormCreateMachine() {
             })}
             className="mt-1 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none hover:border-ring"
           />
-        </div>
+          {errors.price_per_km?.message && (
+            <p className="text-red-500 text-sm font-light">
+              {errors.price_per_km?.message}
+            </p>
+          )}
+        </div> */}
       </div>
       <div className="flex-1 flex flex-col items-center justify-center gap-4 p-4 relative border rounded-md border-gray-300">
         <Controller
@@ -132,7 +159,7 @@ export function FormCreateMachine() {
             <>
               <Label
                 htmlFor="image"
-                className={`flex flex-col w-full h-20 border-2 border-dashed rounded-md cursor-pointer border-gray-300 hover:border-ring hover:bg-primary/10 transition-colors ${
+                className={`flex z-30 flex-col w-full h-20 border-2 border-dashed rounded-md cursor-pointer border-gray-300 hover:border-ring hover:bg-primary/10 transition-colors ${
                   previewImage && "bg-primary/10"
                 }`}
               />
@@ -149,7 +176,7 @@ export function FormCreateMachine() {
                   className="rounded-md object-cover h-[50px] w-[100px] absolute"
                 />
               ) : (
-                <span className="text-sm text-gray-500 absolute top-[50%]">
+                <span className="text-sm text-gray-500 absolute translate-y-2/4 cursor-pointer">
                   Clique ou arraste para enviar uma imagem
                 </span>
               )}
@@ -166,10 +193,19 @@ export function FormCreateMachine() {
             </>
           )}
         />
+        {errors.image?.message && (
+          <p className="text-red-500 text-sm font-light">
+            {errors.image?.message}
+          </p>
+        )}
       </div>
 
-      <Button type="submit" disabled={isLoading} className="min-w-44">
-        {isLoading ? (
+      <Button
+        type="submit"
+        disabled={createMachineMutation.isPending}
+        className="min-w-44"
+      >
+        {createMachineMutation.isPending ? (
           <Loader2 className="animate-spin" />
         ) : (
           " Adicionar Máquina"

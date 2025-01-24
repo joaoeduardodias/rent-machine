@@ -3,7 +3,11 @@ import { createContext, ReactNode, useContext, useState } from "react";
 
 interface MachineData {
   id: string;
-  name: string;
+  name?: string;
+  quantity?: number;
+  // price_per_day?: number;
+  // price_per_km?: number;
+  img_src?: string;
 }
 
 interface ModalContextProps {

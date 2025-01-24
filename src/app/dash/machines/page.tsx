@@ -1,6 +1,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 import { DialogDeleteMachine } from "./components/dialog-delete";
+import { DialogEditMachine } from "./components/edit-machine";
 import { FormCreateMachine } from "./components/form-create-machine";
 import { ListMachines } from "./components/list-machines";
 
@@ -23,8 +24,9 @@ export default async function ManageMachines() {
         </CardHeader>
         <CardContent>
           <ListMachines />
-          <DialogDeleteMachine />
         </CardContent>
+        <DialogDeleteMachine />
+        <DialogEditMachine />
       </Card>
     </div>
   );

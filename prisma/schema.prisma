@@ -11,9 +11,10 @@ model Machine {
   id            String @id @default(cuid())
   name          String
   fileKey       String
-  price_per_day Float
-  price_per_km  Float
+  price_per_day Float?
+  price_per_km  Float?
   img_src       String
+  quantity      Int
 
   @@map("machines")
 }
