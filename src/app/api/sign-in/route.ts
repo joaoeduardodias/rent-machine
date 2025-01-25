@@ -25,10 +25,10 @@ export async function POST(req: NextRequest) {
     if (!isPasswordValid) {
       return NextResponse.json(
         { message: "Email or password invalid" },
-        { status: 405 }
+        { status: 401 }
       );
     }
-    const token = jwt.sign({ userId: user.id }, "termo-frigo-2024", {
+    const token = jwt.sign({ userId: user.id }, "rent-machine", {
       expiresIn: "10h",
     });
 

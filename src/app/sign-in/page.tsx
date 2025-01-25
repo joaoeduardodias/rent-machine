@@ -90,7 +90,12 @@ export default function SingInPage() {
           </div>
           <div className="grid gap-2 mt-4">
             <Label htmlFor="password">Senha</Label>
-            <Input id="password" type="password" {...register("password")} />
+            <Input
+              id="password"
+              placeholder="********"
+              type="password"
+              {...register("password")}
+            />
             {errors.password && (
               <p className="text-sm text-red-500">{errors.password.message}</p>
             )}

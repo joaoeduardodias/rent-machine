@@ -22,12 +22,11 @@ const authOptions: NextAuthOptions = {
               password: credentials.password,
             }),
           });
-          console.log(response);
 
           if (response.status !== 200) return null;
 
           const data = await response.json();
-          if (!data.token || !data.role) return null;
+          if (!data.token) return null;
 
           const parseJWT = await JSON.parse(
             Buffer.from(data.token.split(".")[1], "base64").toString()
@@ -36,7 +35,6 @@ const authOptions: NextAuthOptions = {
           return {
             id: parseJWT.userId,
             email: data.email,
-            role: data.role,
             name: data.name,
           };
         } catch (error) {
@@ -65,8 +63,8 @@ const authOptions: NextAuthOptions = {
     },
   },
   pages: {
-    signIn: "/auth",
-    signOut: "/auth",
+    signIn: "/sign-in",
+    signOut: "/sign-in",
   },
 };
 
