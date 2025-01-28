@@ -1,12 +1,10 @@
 import { env } from "@/env";
 import { r2 } from "@/lib/cloudfare";
+import { prisma } from "@/lib/prisma";
 import { PutObjectCommand } from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
-import { PrismaClient } from "@prisma/client";
 import { randomUUID } from "crypto";
 import { NextRequest, NextResponse } from "next/server";
-
-const prisma = new PrismaClient();
 
 export async function POST(request: NextRequest) {
   try {
@@ -15,8 +13,6 @@ export async function POST(request: NextRequest) {
     const name = body.get("name") as string;
     const quantity = body.get("quantity") as string;
     const image = body.get("image") as File | null;
-    // const price_per_day = body.get("price_per_day") as string;
-    // const price_per_km = body.get("price_per_km") as string;
 
     if (!name || !quantity || !image) {
       return NextResponse.json({ error: "Missing data" }, { status: 400 });
@@ -44,6 +40,7 @@ export async function POST(request: NextRequest) {
       },
       body: image,
     });
+
     if (!upload.ok) {
       return NextResponse.json(
         { error: "Error uploading image" },
@@ -58,8 +55,6 @@ export async function POST(request: NextRequest) {
         name,
         fileKey,
         quantity: Number(quantity),
-        // price_per_day: Number(price_per_day),
-        // price_per_km: Number(price_per_km),
         img_src: imgUrl,
       },
     });

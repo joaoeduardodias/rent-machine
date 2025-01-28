@@ -106,7 +106,7 @@ export function FormCreateMachine() {
           )}
         </div>
       </div>
-      <div className="flex-1 flex flex-col items-center justify-center gap-4 p-4 relative border rounded-md border-gray-300">
+      <div className="flex-1 flex flex-col items-center justify-center gap-4 relative rounded-md">
         <Controller
           name="image"
           control={control}
@@ -116,9 +116,26 @@ export function FormCreateMachine() {
             <>
               <Label
                 htmlFor="image"
-                className={`flex z-30 flex-col w-full h-20 border-2 border-dashed rounded-md cursor-pointer border-gray-300 hover:border-ring hover:bg-primary/10 transition-colors ${
-                  previewImage && "bg-primary/10"
-                }`}
+                tabIndex={0}
+                className={`relative flex z-30 flex-col w-full h-20 border 
+                  border-dashed rounded-md cursor-pointer border-gray-300 
+                  hover:border-ring 
+                  hover:bg-primary/10 transition-colors 
+                  focus:outline-none 
+                  focus:ring-1 
+                  focus:ring-primary
+                  focus:bg-primary/10
+                  ${previewImage && "bg-primary/10"}`}
+              />
+              <Input
+                id="image"
+                type="file"
+                accept="image/*"
+                className="mt-1 sr-only"
+                aria-label="Carregar uma imagem"
+                onChange={(e) => {
+                  field.onChange(e.target.files);
+                }}
               />
 
               {previewImage ? (
@@ -133,20 +150,10 @@ export function FormCreateMachine() {
                   className="rounded-md object-cover h-[50px] w-[100px] absolute"
                 />
               ) : (
-                <span className="text-sm text-gray-500 absolute translate-y-2/4 cursor-pointer">
+                <span className="text-sm text-gray-500 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 cursor-pointer">
                   Clique ou arraste para enviar uma imagem
                 </span>
               )}
-
-              <Input
-                id="image"
-                type="file"
-                accept="image/*"
-                className="mt-1 hidden"
-                onChange={(e) => {
-                  field.onChange(e.target.files);
-                }}
-              />
             </>
           )}
         />

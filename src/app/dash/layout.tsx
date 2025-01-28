@@ -1,6 +1,8 @@
+"use client";
 import { Button } from "@/components/ui/button";
 import { ModalsProvider } from "@/context/modal-context";
 import { Home, LogOut, Truck } from "lucide-react";
+import { signOut } from "next-auth/react";
 import Link from "next/link";
 
 const sidebarNavItems = [
@@ -47,12 +49,14 @@ export default function DashboardLayout({
               </nav>
             </div>
             <div className="mt-auto p-4">
-              <Link href="/">
-                <Button variant="outline" className="w-full">
-                  <LogOut className="mr-2 h-4 w-4" />
-                  Sair do Admin
-                </Button>
-              </Link>
+              <Button
+                variant="outline"
+                className="w-full"
+                onClick={() => signOut({ callbackUrl: "/sign-in" })}
+              >
+                <LogOut className="mr-2 h-4 w-4" />
+                Sair do Admin
+              </Button>
             </div>
           </div>
         </aside>

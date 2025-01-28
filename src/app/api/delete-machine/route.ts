@@ -1,9 +1,7 @@
 import { r2 } from "@/lib/cloudfare";
+import { prisma } from "@/lib/prisma";
 import { DeleteObjectCommand } from "@aws-sdk/client-s3";
-import { PrismaClient } from "@prisma/client";
 import { NextRequest, NextResponse } from "next/server";
-
-const prisma = new PrismaClient();
 
 export async function DELETE(request: NextRequest) {
   try {

@@ -58,7 +58,7 @@ const authOptions: NextAuthOptions = {
       return session;
     },
     async redirect({ url, baseUrl }) {
-      if (url.startsWith("/")) return `${baseUrl}${url}`;
+      if (url.startsWith("/sign-in")) return `${baseUrl}${url}`;
       return baseUrl;
     },
   },

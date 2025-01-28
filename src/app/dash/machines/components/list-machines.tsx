@@ -33,9 +33,8 @@ export function ListMachines() {
           <TableHead className="w-40">Imagem</TableHead>
           <TableHead>Nome</TableHead>
           <TableHead>Quantidade</TableHead>
-          {/* <TableHead>Preço por Dia</TableHead>
-          <TableHead>Preço por Km</TableHead> */}
-          <TableHead>Ações</TableHead>
+
+          <TableHead className="text-center">Ações</TableHead>
         </TableRow>
       </TableHeader>
       <TableBody>
@@ -68,9 +67,8 @@ export function ListMachines() {
               </TableCell>
               <TableCell className="w-2/4">{machine.name}</TableCell>
               <TableCell>{machine.quantity}</TableCell>
-              {/* <TableCell>R$ {machine.price_per_day.toFixed(2)}</TableCell>
-              <TableCell>R$ {machine.price_per_km.toFixed(2)}</TableCell> */}
-              <TableCell className="space-x-2">
+
+              <TableCell className="flex flex-col gap-1 justify-center items-center md:flex-row">
                 <Button
                   onClick={() =>
                     openModal("edit-machine", {
@@ -78,12 +76,9 @@ export function ListMachines() {
                       name: machine.name,
                       quantity: machine.quantity,
                       img_src: machine.img_src,
-                      // price_per_day: machine.price_per_day,
-                      // price_per_km: machine.price_per_km,
                     })
                   }
-                  variant="outline"
-                  className="min-w-24"
+                  className="w-20 bg-green-400 hover:bg-green-400/80"
                 >
                   Editar
                 </Button>
@@ -94,6 +89,7 @@ export function ListMachines() {
                       name: machine.name,
                     })
                   }
+                  className="w-20"
                   variant="destructive"
                 >
                   Remover

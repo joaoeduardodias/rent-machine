@@ -150,7 +150,7 @@ export function DialogEditMachine() {
               )}
             </div>
           </div>
-          <div className="flex-1 flex flex-col items-center justify-center gap-4 p-4 relative border rounded-md border-gray-300">
+          <div className="flex-1 flex flex-col items-center justify-center gap-4 relative rounded-md">
             <Controller
               name="image"
               control={control}
@@ -162,11 +162,26 @@ export function DialogEditMachine() {
                 <>
                   <Label
                     htmlFor="image-edit"
-                    className={`flex flex-col w-full h-20 border-2 border-dashed rounded-md cursor-pointer border-gray-300 hover:border-ring hover:bg-primary/10 transition-colors ${
-                      previewUploadImage && "bg-primary/10"
-                    }`}
+                    tabIndex={0}
+                    className={`relative flex z-30 flex-col w-full h-20 border 
+                      border-dashed rounded-md cursor-pointer border-gray-300 
+                      hover:border-ring 
+                      hover:bg-primary/10 transition-colors 
+                      focus:outline-none 
+                      focus:ring-1 
+                      focus:ring-primary
+                      focus:bg-primary/10
+                      ${previewUploadImage && "bg-primary/10"}`}
                   />
-
+                  <Input
+                    id="image-edit"
+                    type="file"
+                    accept="image/*"
+                    className="mt-1 sr-only"
+                    onChange={(e) => {
+                      field.onChange(e.target.files);
+                    }}
+                  />
                   {previewUploadImage ? (
                     <Image
                       src={
@@ -179,20 +194,10 @@ export function DialogEditMachine() {
                       className="rounded-md object-cover h-[50px] w-[100px] absolute"
                     />
                   ) : (
-                    <span className="text-sm text-gray-500 absolute top-[50%]">
+                    <span className="text-sm text-gray-500 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
                       Clique ou arraste para enviar uma imagem
                     </span>
                   )}
-
-                  <Input
-                    id="image-edit"
-                    type="file"
-                    accept="image/*"
-                    className="mt-1 hidden"
-                    onChange={(e) => {
-                      field.onChange(e.target.files);
-                    }}
-                  />
                 </>
               )}
             />

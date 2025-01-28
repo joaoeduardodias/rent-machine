@@ -8,19 +8,30 @@ datasource db {
 }
 
 model Machine {
-  id            String @id @default(cuid())
-  name          String
-  fileKey       String
-  price_per_day Float?
-  price_per_km  Float?
-  img_src       String
-  quantity      Int
+  id       String  @id @default(cuid())
+  name     String
+  fileKey  String
+  img_src  String
+  quantity Int
+  rent_id  String?
+  rents    Rent?   @relation(fields: [rent_id], references: [id])
 
   @@map("machines")
 }
 
+model Rent {
+  id         String    @id @default(cuid())
+  start_date DateTime
+  end_date   DateTime
+  createdAt  DateTime  @default(now())
+  client     String
+  machines   Machine[]
+
+  @@map("rents")
+}
+
 model User {
-  id        String   @id @default(uuid())
+  id        String   @id @default(cuid())
   name      String
   email     String   @unique
   password  String
