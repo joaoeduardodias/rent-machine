@@ -9,6 +9,7 @@ const envSchema = z.object({
   CLOUDFARE_SECRET_ACCESS_KEY: z.string(),
   CLOUDFARE_DOMAIN_PUBLIC: z.string().url(),
   NEXTAUTH_URL: z.string().url(),
+  API_KEY: z.string(),
 });
 
 export const env = envSchema.parse(process.env);

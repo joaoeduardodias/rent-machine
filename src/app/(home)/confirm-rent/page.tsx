@@ -12,6 +12,8 @@ import {
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { useRentMachine } from "@/hooks/use-rent-machine";
+import { sendOnwerConfirmRent } from "@/http/email/send-onwer-confirm-rent";
+import { useMutation } from "@tanstack/react-query";
 import {
   Calendar,
   CircleCheckBig,
@@ -27,13 +29,20 @@ import { toast } from "sonner";
 import { useHookFormMask } from "use-mask-input";
 
 type FormData = {
-  meioPagamento: string;
-  parcelas: number;
-  name: string;
+  paymentMethod: string;
+  installments: number;
+  nameClient: string;
   email: string;
-  telefone: string;
+  telephone: string;
   message: string;
+  cep: string;
+  period: string;
+  address: string;
+  machine: string;
+  methodPayment: string;
+  number: string;
 };
+
 const meiosPagamento = [
   { id: "pix", nome: "PIX" },
   { id: "debito", nome: "Cartão de Débito" },
@@ -43,6 +52,20 @@ const meiosPagamento = [
 export default function ConfirmRent() {
   const { currentMachine, periodRent, currentMachineName } = useRentMachine();
   const router = useRouter();
+
+  const sendMailMutation = useMutation({
+    mutationKey: ["send-email-onwer"],
+    mutationFn: sendOnwerConfirmRent,
+    onError: () => {
+      toast.error("Erro encontrado, por favor tente novamente.");
+    },
+    onSuccess: () => {
+      toast.success("E-mail enviado com sucesso!", {
+        description:
+          "Enviamos um email para nossos representantes, entraremos em contato em breve.",
+      });
+    },
+  });
 
   useEffect(() => {
     if (!currentMachine) {
@@ -55,22 +78,51 @@ export default function ConfirmRent() {
     handleSubmit,
     control,
     watch,
+    setValue,
     formState: { errors },
   } = useForm<FormData>({
     defaultValues: {
-      telefone: "",
-      parcelas: 1,
+      telephone: "",
+      installments: 1,
     },
   });
   const registerWithMask = useHookFormMask(register);
-  const paymentMethod = watch("meioPagamento");
+  const paymentMethod = watch("paymentMethod");
+  const cepInput = watch("cep");
+  const extractNumbers = String(cepInput).replace(/\D/g, "");
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  function onSubmit(data: FormData) {
-    toast.success("Formulário enviado com sucesso!", {
-      description:
-        "Enviamos um email para nossos representantes, entraremos em contato em breve.",
-    });
+  if (cepInput && extractNumbers.length === 8) {
+    const fetchAddress = async () => {
+      try {
+        const response = await fetch(
+          `https://viacep.com.br/ws/${extractNumbers}/json/`
+        );
+        const data = await response.json();
+
+        if (!data.erro) {
+          setValue(
+            "address",
+            `${data.localidade}  ${data.bairro}  ${data.logradouro}` || ""
+          );
+        } else {
+          console.error("CEP não encontrado");
+        }
+      } catch (error) {
+        console.error("Erro ao buscar o endereço:", error);
+      }
+    };
+    fetchAddress();
+  }
+
+  function handleSubmitMessageConfirmRent(data: FormData) {
+    const newData = {
+      ...data,
+      machine: currentMachineName,
+      period: periodRent,
+      name: "João Dias",
+      emailOnwer: "joaoeduardodias123@gmail.com", // email da pessoa para realizar os orçamentos
+    };
+    sendMailMutation.mutateAsync(newData);
   }
 
   return (
@@ -83,23 +135,23 @@ export default function ConfirmRent() {
           <div className="max-w-4xl mx-auto bg-yellow-100 p-4 md:p-8 rounded-lg shadow-lg">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
               <form
-                onSubmit={handleSubmit(onSubmit)}
+                onSubmit={handleSubmit(handleSubmitMessageConfirmRent)}
                 className="space-y-2 md:space-y-6"
               >
                 <div>
-                  <Label className="ml-1" htmlFor="name">
+                  <Label className="ml-1" htmlFor="nameClient">
                     Nome
                   </Label>
                   <Input
                     id="name"
-                    {...register("name", {
+                    {...register("nameClient", {
                       required: "O nome é obrigatório",
                     })}
-                    className="py-6 "
+                    className="py-5 "
                   />
-                  {errors.name && (
+                  {errors.nameClient && (
                     <p className="text-red-500 text-sm mt-1">
-                      {errors.name.message}
+                      {errors.nameClient.message}
                     </p>
                   )}
                 </div>
@@ -117,7 +169,7 @@ export default function ConfirmRent() {
                         message: "E-mail inválido",
                       },
                     })}
-                    className="py-6"
+                    className="py-5"
                   />
                   {errors.email && (
                     <p className="text-red-500 text-sm mt-1">
@@ -125,27 +177,87 @@ export default function ConfirmRent() {
                     </p>
                   )}
                 </div>
+
                 <div>
-                  <Label className="ml-1" htmlFor="telefone">
+                  <Label className="ml-1" htmlFor="telephone">
                     Telefone
                   </Label>
 
                   <Input
-                    id="telefone"
-                    className="py-6"
-                    {...registerWithMask("telefone", ["(99) 99999-9999"], {
+                    id="telephone"
+                    className="py-5"
+                    {...registerWithMask("telephone", ["(99) 99999-9999"], {
+                      required: "O Telefone é obrigatório",
                       placeholder: "",
                     })}
                   />
-                  {errors.telefone && <span>{errors.telefone.message}</span>}
+                  {errors.telephone && <span>{errors.telephone.message}</span>}
+                </div>
+                <div>
+                  <Label className="ml-1" htmlFor="cep">
+                    Cep
+                  </Label>
+                  <Input
+                    id="cep"
+                    {...registerWithMask("cep", ["99999-999"], {
+                      required: "Cep é obrigatório",
+                      placeholder: "",
+                    })}
+                    className="py-5"
+                  />
+                  {errors.cep && (
+                    <p className="text-red-500 text-sm mt-1">
+                      {errors.cep.message}
+                    </p>
+                  )}
                 </div>
                 <div className="mb-8 flex gap-1">
                   <div className="w-full">
-                    <Label className="ml-1" htmlFor="meioPagamento">
+                    <Label className="ml-1" htmlFor="address">
+                      Endereço
+                    </Label>
+                    <Input
+                      id="address"
+                      disabled={!cepInput}
+                      {...register("address", {
+                        required: "Endereço é obrigatório",
+                      })}
+                      className="flex-1  py-5"
+                    />
+                    {errors.address && (
+                      <p className="text-red-500 text-sm mt-1">
+                        {errors.address.message}
+                      </p>
+                    )}
+                  </div>
+                  <div>
+                    <Label className="ml-1" htmlFor="number">
+                      Número
+                    </Label>
+                    <Input
+                      id="number"
+                      type="number"
+                      disabled={!cepInput}
+                      {...register("number", {
+                        required: "Número é obrigatório",
+                        valueAsNumber: true,
+                      })}
+                      className="w-full min-w-14 md:min-w-28 py-5 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                    />
+                    {errors.number && (
+                      <p className="text-red-500 text-sm mt-1">
+                        {errors.number.message}
+                      </p>
+                    )}
+                  </div>
+                </div>
+                <div className="mb-8 flex gap-1">
+                  <div className="w-full">
+                    <Label className="ml-1" htmlFor="paymentMethod">
                       Meio de Pagamento
                     </Label>
                     <Controller
-                      name="meioPagamento"
+                      name="paymentMethod"
                       control={control}
                       rules={{ required: true }}
                       render={({ field }) => (
@@ -153,7 +265,7 @@ export default function ConfirmRent() {
                           onValueChange={field.onChange}
                           value={field.value}
                         >
-                          <SelectTrigger className="flex-1 py-6">
+                          <SelectTrigger className="flex-1 py-5">
                             <SelectValue placeholder="Selecione o meio de pagamento" />
                           </SelectTrigger>
                           <SelectContent>
@@ -169,11 +281,11 @@ export default function ConfirmRent() {
                   </div>
                   {paymentMethod === "credito" && (
                     <div className="">
-                      <Label className="ml-1 " htmlFor="parcelas">
+                      <Label className="ml-1 " htmlFor="installments">
                         Parcelas
                       </Label>
                       <Controller
-                        name="parcelas"
+                        name="installments"
                         control={control}
                         rules={{ required: true }}
                         render={({ field }) => (
@@ -183,7 +295,7 @@ export default function ConfirmRent() {
                             }
                             value={String(field.value)}
                           >
-                            <SelectTrigger className="w-full min-w-14 md:min-w-28 py-6">
+                            <SelectTrigger className="w-full min-w-14 md:min-w-28 py-5">
                               <SelectValue placeholder="Selecione o número de parcelas" />
                             </SelectTrigger>
                             <SelectContent>
@@ -209,7 +321,7 @@ export default function ConfirmRent() {
                     {...register("message")}
                     className="w-full resize-none"
                     placeholder="Informações adicionais..."
-                    rows={3}
+                    rows={2}
                   ></Textarea>
                   {errors.message && (
                     <p className="text-red-500 text-sm mt-1">
@@ -217,8 +329,14 @@ export default function ConfirmRent() {
                     </p>
                   )}
                 </div>
-                <Button type="submit" className="w-full py-6">
-                  Confirmar Reserva
+                <Button
+                  type="submit"
+                  disabled={sendMailMutation.isPending}
+                  className="w-full py-5"
+                >
+                  {sendMailMutation.isPending
+                    ? "Enviando ..."
+                    : "Confirmar Reserva"}
                   <CircleCheckBig className="ml-1" />
                 </Button>
               </form>
