@@ -5,7 +5,8 @@ type RentMachineBody = {
   startDate: Date;
   endDate: Date;
   machineId: string;
-  status?: "aproved" | "pending" | "canceled";
+  email: string;
+  status?: "approved" | "pending" | "canceled";
   client: string;
   value: number;
   cep: string;
@@ -24,6 +25,7 @@ export async function POST(request: NextRequest) {
       number,
       paymentMethod,
       status,
+      email,
       value,
       message,
       startDate,
@@ -38,6 +40,7 @@ export async function POST(request: NextRequest) {
       !client ||
       !address ||
       !cep ||
+      !email ||
       !number ||
       !paymentMethod
     ) {
@@ -69,7 +72,7 @@ export async function POST(request: NextRequest) {
         AND: [
           { start_date: { lte: endDate } },
           { end_date: { gte: startDate } },
-          { status: { in: ["aproved", "pending"] } },
+          { status: { in: ["approved", "pending"] } },
         ],
       },
     });
@@ -86,6 +89,7 @@ export async function POST(request: NextRequest) {
     const rentCreated = await prisma.rent.create({
       data: {
         address,
+        email,
         cep,
         number,
         paymentMethod,

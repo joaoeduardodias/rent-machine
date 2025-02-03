@@ -2,12 +2,13 @@ interface CreateRentRequest {
   startDate: Date;
   endDate: Date;
   machineId: string;
-  status?: "aproved" | "pending" | "canceled";
+  status?: "approved" | "pending" | "canceled";
   client: string;
   value: number;
   cep: string;
   address: string;
   number: number;
+  email: string;
   paymentMethod: string;
   message?: string;
 }
@@ -17,6 +18,7 @@ export async function createRent({
   cep,
   client,
   endDate,
+  email,
   machineId,
   number,
   paymentMethod,
@@ -31,6 +33,7 @@ export async function createRent({
       address,
       cep,
       client,
+      email,
       endDate,
       machineId,
       number,

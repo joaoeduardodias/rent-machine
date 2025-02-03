@@ -14,7 +14,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { useRentMachine } from "@/hooks/use-rent-machine";
 import { createRent } from "@/http/create-rent";
 import { deleteRent } from "@/http/delete-rent";
-import { sendOnwerConfirmRent } from "@/http/email/send-onwer-confirm-rent";
+import { sendOwnerConfirmRent } from "@/http/email/send-owner-confirm-rent";
 import { useMutation } from "@tanstack/react-query";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
@@ -68,8 +68,8 @@ export default function ConfirmRent() {
   });
 
   const sendMailMutation = useMutation({
-    mutationKey: ["send-email-onwer"],
-    mutationFn: sendOnwerConfirmRent,
+    mutationKey: ["send-email-owner"],
+    mutationFn: sendOwnerConfirmRent,
     onError: async (_, variables) => {
       deleteRentMutation.mutateAsync({ id: variables.idRent });
     },
@@ -133,11 +133,12 @@ export default function ConfirmRent() {
         startDate,
         endDate,
         name: "João Dias",
-        emailOnwer: "joaoeduardodias123@gmail.com", // email da pessoa para realizar os orçamentos
+        emailOwner: "joaoeduardodias123@gmail.com", // email da pessoa para realizar os orçamentos
       };
       const rent = await createRentMutation.mutateAsync({
         address: newData.address,
         cep: newData.cep,
+        email: newData.email,
         client: newData.nameClient,
         endDate: newData.endDate!,
         startDate: newData.startDate!,

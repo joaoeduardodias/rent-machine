@@ -66,6 +66,7 @@ export async function POST(req: NextRequest) {
               ? `${paymentMethod} em ${installments} X`
               : paymentMethod,
           message: message,
+          idRent,
         },
       },
     },

@@ -1,7 +1,7 @@
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 
-interface SendOnwerConfirmRentRequest {
+interface SendOwnerConfirmRentRequest {
   paymentMethod: string;
   installments: number;
   nameClient: string;
@@ -14,12 +14,12 @@ interface SendOnwerConfirmRentRequest {
   address: string;
   machine: string;
   number: string;
-  emailOnwer: string;
+  emailOwner: string;
   name: string;
   idRent: string;
 }
 
-export async function sendOnwerConfirmRent({
+export async function sendOwnerConfirmRent({
   address,
   cep,
   email,
@@ -32,10 +32,10 @@ export async function sendOnwerConfirmRent({
   startDate,
   endDate,
   telephone,
-  emailOnwer,
+  emailOwner,
   name,
   idRent,
-}: SendOnwerConfirmRentRequest) {
+}: SendOwnerConfirmRentRequest) {
   const response = await fetch("/api/send-mail-rent", {
     method: "POST",
     headers: {
@@ -57,7 +57,7 @@ export async function sendOnwerConfirmRent({
         { locale: ptBR }
       )}`,
       telephone: telephone.replace(/\D/g, ""),
-      emailOnwer,
+      emailOwner,
       name,
       idRent,
     }),

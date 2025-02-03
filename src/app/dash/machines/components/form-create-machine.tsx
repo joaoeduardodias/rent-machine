@@ -28,12 +28,12 @@ export function FormCreateMachine() {
     watch,
     formState: { errors },
   } = useForm<FormData>();
-  const watchimage = watch("image");
+  const watchImage = watch("image");
 
   // preview image
   useEffect(() => {
-    if (watchimage && watchimage.length > 0) {
-      const file = watchimage[0];
+    if (watchImage && watchImage.length > 0) {
+      const file = watchImage[0];
       const reader = new FileReader();
       reader.onloadend = () => {
         setPreviewImage(reader.result as string);
@@ -42,7 +42,7 @@ export function FormCreateMachine() {
     } else {
       setPreviewImage(null);
     }
-  }, [watchimage]);
+  }, [watchImage]);
 
   const createMachineMutation = useMutation({
     mutationFn: createMachine,

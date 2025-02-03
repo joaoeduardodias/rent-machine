@@ -12,5 +12,5 @@ export default withAuth({
 });
 
 export const config = {
-  matcher: ["/dash/:path*"],
+  matcher: ["/dash/:path*", "/form-values-send-mail-client"],
 };

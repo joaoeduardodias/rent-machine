@@ -25,6 +25,7 @@ model Rent {
   end_date      DateTime
   createdAt     DateTime  @default(now())
   client        String
+  email         String    @default("")
   status        String?   @default("pending")
   address       String
   cep           String
