@@ -10,6 +10,8 @@ const envSchema = z.object({
   CLOUDFARE_DOMAIN_PUBLIC: z.string().url(),
   NEXTAUTH_URL: z.string().url(),
   API_KEY: z.string(),
+  NEXT_PUBLIC_NAME_OWNER: z.string(),
+  NEXT_PUBLIC_EMAIL_OWNER: z.string(),
 });
 
 export const env = envSchema.parse(process.env);

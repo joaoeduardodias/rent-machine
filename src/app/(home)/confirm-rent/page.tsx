@@ -11,6 +11,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
+import { env } from "@/env";
 import { useRentMachine } from "@/hooks/use-rent-machine";
 import { createRent } from "@/http/create-rent";
 import { deleteRent } from "@/http/delete-rent";
@@ -132,8 +133,8 @@ export default function ConfirmRent() {
         machine: currentMachineName,
         startDate,
         endDate,
-        name: "João Dias",
-        emailOwner: "joaoeduardodias123@gmail.com", // email da pessoa para realizar os orçamentos
+        name: env.NEXT_PUBLIC_NAME_OWNER,
+        emailOwner: env.NEXT_PUBLIC_EMAIL_OWNER,
       };
       const rent = await createRentMutation.mutateAsync({
         address: newData.address,
