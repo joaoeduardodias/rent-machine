@@ -74,10 +74,7 @@ export default function ConfirmRent() {
       deleteRentMutation.mutateAsync({ id: variables.idRent });
     },
     onSuccess: async () => {
-      toast.success("E-mail enviado com sucesso!", {
-        description:
-          "Enviamos um email para nossos representantes, entraremos em contato em breve.",
-      });
+      router.push("/confirmation-rent");
     },
   });
 

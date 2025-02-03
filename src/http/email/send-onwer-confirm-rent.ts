@@ -1,3 +1,6 @@
+import { format } from "date-fns";
+import { ptBR } from "date-fns/locale";
+
 interface SendOnwerConfirmRentRequest {
   paymentMethod: string;
   installments: number;
@@ -6,7 +9,8 @@ interface SendOnwerConfirmRentRequest {
   telephone: string;
   message?: string;
   cep: string;
-  period: string;
+  startDate?: Date;
+  endDate?: Date;
   address: string;
   machine: string;
   number: string;
@@ -25,7 +29,8 @@ export async function sendOnwerConfirmRent({
   nameClient,
   number,
   paymentMethod,
-  period,
+  startDate,
+  endDate,
   telephone,
   emailOnwer,
   name,
@@ -46,7 +51,11 @@ export async function sendOnwerConfirmRent({
       nameClient,
       number,
       paymentMethod,
-      period,
+      period: `${format(startDate!, "dd/MM/yyyy", { locale: ptBR })} - ${format(
+        endDate!,
+        "dd/MM/yyyy",
+        { locale: ptBR }
+      )}`,
       telephone: telephone.replace(/\D/g, ""),
       emailOnwer,
       name,
