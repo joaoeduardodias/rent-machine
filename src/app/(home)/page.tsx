@@ -1,29 +1,8 @@
 import imgEscavadeira from "@/assets/escavadeira.png";
-import imgPaCarregadeira from "@/assets/pa-carregadeira.png";
-import imgRetroescavadeira from "@/assets/retroescavadeira.png";
-import imgRolo from "@/assets/rolo.png";
 import { ArrowRight, Calendar, Phone, Shield, Truck } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-
-const machines = [
-  {
-    name: "Escavadeira",
-    image: imgEscavadeira,
-  },
-  {
-    name: "Retroescavadeira",
-    image: imgRetroescavadeira,
-  },
-  {
-    name: "Pá Carregadeira",
-    image: imgPaCarregadeira,
-  },
-  {
-    name: "Rolo Compactador",
-    image: imgRolo,
-  },
-];
+import { ListMachines } from "./components/list-machines";
 
 export default function Home() {
   return (
@@ -97,34 +76,7 @@ export default function Home() {
           <h3 className="text-3xl font-bold text-foreground mb-8 text-center">
             Algumas de nossas máquinas
           </h3>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-            {machines.map((machine, index) => (
-              <div
-                key={index}
-                className="bg-white rounded-lg shadow-md overflow-hidden"
-              >
-                <Image
-                  src={
-                    machine.image ||
-                    "https://fakeimg.pl/400x300?text=img+maquinas"
-                  }
-                  alt={machine.name}
-                  width={400}
-                  height={300}
-                  className="w-full h-40 md:h-48 object-contain p-2"
-                />
-                <div className="p-4">
-                  <h4 className="text-xl font-semibold mb-2">{machine.name}</h4>
-                  <Link
-                    href="/rent"
-                    className="text-yellow-500 hover:text-yellow-600"
-                  >
-                    Ver detalhes
-                  </Link>
-                </div>
-              </div>
-            ))}
-          </div>
+          <ListMachines />
         </div>
       </section>
 
