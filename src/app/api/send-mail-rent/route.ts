@@ -25,6 +25,7 @@ interface SendMailProps {
   address: string;
   machine: string;
   number: string;
+  idRent?: string;
 }
 
 export async function POST(req: NextRequest) {
@@ -42,48 +43,9 @@ export async function POST(req: NextRequest) {
     paymentMethod,
     period,
     telephone,
+    idRent,
   } = (await req.json()) as SendMailProps;
-  console.log({
-    emailOnwer,
-    name,
-    address,
-    cep,
-    email,
-    installments,
-    machine,
-    message,
-    nameClient,
-    number,
-    paymentMethod,
-    period,
-    telephone,
-  });
-  if (
-    [
-      emailOnwer,
-      name,
-      address,
-      cep,
-      email,
-      installments,
-      machine,
-      nameClient,
-      number,
-      paymentMethod,
-      period,
-      telephone,
-    ].some(
-      (field) =>
-        field === undefined ||
-        field === null ||
-        (typeof field === "string" && field.trim() === "")
-    )
-  ) {
-    return NextResponse.json(
-      { error: "Missing information!" },
-      { status: 400 }
-    );
-  }
+
   const recipients = [new Recipient(emailOnwer, name)];
 
   const personalization = [
@@ -119,5 +81,25 @@ export async function POST(req: NextRequest) {
 
   await mailerSend.email.send(emailParams);
 
-  return NextResponse.json({ message: "email sending" }, { status: 200 });
+  const returnData = {
+    emailOnwer,
+    name,
+    address,
+    cep,
+    email,
+    installments,
+    machine,
+    message,
+    nameClient,
+    number,
+    paymentMethod,
+    period,
+    telephone,
+    idRent,
+  };
+
+  return NextResponse.json(
+    { message: "email sending", returnData },
+    { status: 200 }
+  );
 }

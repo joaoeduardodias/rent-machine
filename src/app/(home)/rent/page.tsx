@@ -32,7 +32,8 @@ export default function Rent() {
     currentMachine,
     setCurrentMachine,
     setCurrentMachineName,
-    setPeriodRent,
+    setEndDate,
+    setStartDate,
   } = useRentMachine();
 
   const { data } = useQuery({
@@ -51,6 +52,7 @@ export default function Rent() {
   useEffect(() => {
     setDate(undefined);
   }, []);
+
   useEffect(() => {
     if (!currentMachine) {
       setDate(undefined);
@@ -59,106 +61,105 @@ export default function Rent() {
 
   useEffect(() => {
     if (date?.from && date.to) {
-      setPeriodRent(
-        `${format(date.from, "dd/MM/yyyy", { locale: ptBR })} - ${format(
-          date.to,
-          "dd/MM/yyyy",
-          { locale: ptBR }
-        )}`
-      );
+      setEndDate(date.to);
+      setStartDate(date.from);
     }
     if (data?.machineName) {
       setCurrentMachineName(data.machineName);
     }
-  }, [date, setPeriodRent, setCurrentMachineName, data?.machineName]);
+  }, [
+    date,
+    setEndDate,
+    setStartDate,
+    setCurrentMachineName,
+    data?.machineName,
+  ]);
 
   return (
-    <main className="min-h-screen bg-yellow-50">
-      <section className="py-5 md:py-10 bg-white">
-        <div className="container mx-auto px-4">
-          <h2 className="text-2xl md:text-4xl font-bold text-gray-800 mb-6 md:mb-12 text-center">
-            Faça sua Reserva
-          </h2>
-          <div className="max-w-4xl mx-auto bg-yellow-100 p-4 md:p-8 rounded-lg shadow-lg">
-            <div className="mb-8">
-              <Label
-                htmlFor="machine"
-                className="block text-foreground font-bold mb-2  text-base md:text-lg"
-              >
-                Selecione a Máquina
-              </Label>
-
-              <Select
-                disabled={isLoading}
-                value={currentMachine}
-                onValueChange={(value) => setCurrentMachine(value)}
-              >
-                <SelectTrigger className="w-full py-6">
-                  <SelectValue placeholder="Selecione a máquina" />
-                </SelectTrigger>
-                <SelectContent>
-                  {machines?.map((machine) => (
-                    <SelectItem key={machine.id} value={machine.id}>
-                      {machine.name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-            <div className="mb-8">
-              <Label className="block text-foreground font-bold mb-2  text-base md:text-lg">
-                Selecione o Período
-              </Label>
-              <Calendar
-                mode="range"
-                selected={date}
-                onSelect={setDate}
-                numberOfMonths={2}
-                className={cn("w-full flex items-center justify-center")}
-                disabled={(date) => {
-                  if (!currentMachine || date < startOfToday()) {
-                    return true;
-                  }
-                  return (
-                    data?.unavailablePeriods?.some((unavailablePeriod) => {
-                      const startDate = new Date(unavailablePeriod.startDate);
-                      const endDate = new Date(unavailablePeriod.endDate);
-
-                      return date >= startDate && date <= endDate;
-                    }) || false
-                  );
-                }}
-                locale={ptBR}
-                classNames={{
-                  months: "flex flex-col  md:flex-row gap-4",
-                  month: "border border-amber-500 rounded-lg bg-amber-50 p-8",
-                  head_cell:
-                    "font-light text-sm px-[5px] md:px-[13px] text-muted-foreground mt-1",
-                }}
-              />
-
-              {date?.from && (
-                <p className="md:mt-2 text-xs text-center md:text-left  md:text-sm text-muted-foreground">
-                  Período selecionado:{" "}
-                  {format(date.from, "dd/MM/yyyy", { locale: ptBR })}
-                  {date.to
-                    ? ` - ${format(date.to, "dd/MM/yyyy", { locale: ptBR })}`
-                    : ""}
-                </p>
-              )}
-            </div>
-
-            <Button
-              onClick={() => router.push("/confirm-rent")}
-              className="w-full py-6 disabled:cursor-not-allowed"
-              disabled={!currentMachine}
+    <main className="flex-grow py-5 md:py-10 bg-white">
+      <div className="container mx-auto px-4">
+        <h2 className="text-2xl md:text-4xl font-bold text-gray-800 mb-6 md:mb-12 text-center">
+          Faça sua Reserva
+        </h2>
+        <div className="max-w-4xl mx-auto bg-yellow-100 p-4 md:p-8 rounded-lg shadow-lg">
+          <div className="mb-8">
+            <Label
+              htmlFor="machine"
+              className="block text-foreground font-bold mb-2  text-base md:text-lg"
             >
-              Confirmar Reserva
-              <ArrowRight className="ml-2" />
-            </Button>
+              Selecione a Máquina
+            </Label>
+
+            <Select
+              disabled={isLoading}
+              value={currentMachine}
+              onValueChange={(value) => setCurrentMachine(value)}
+            >
+              <SelectTrigger className="w-full py-6">
+                <SelectValue placeholder="Selecione a máquina" />
+              </SelectTrigger>
+              <SelectContent>
+                {machines?.map((machine) => (
+                  <SelectItem key={machine.id} value={machine.id}>
+                    {machine.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
+          <div className="mb-8">
+            <Label className="block text-foreground font-bold mb-2  text-base md:text-lg">
+              Selecione o Período
+            </Label>
+            <Calendar
+              mode="range"
+              selected={date}
+              onSelect={setDate}
+              numberOfMonths={2}
+              className={cn("w-full flex items-center justify-center")}
+              disabled={(date) => {
+                if (!currentMachine || date < startOfToday()) {
+                  return true;
+                }
+                return (
+                  data?.unavailablePeriods?.some((unavailablePeriod) => {
+                    const startDate = new Date(unavailablePeriod.startDate);
+                    const endDate = new Date(unavailablePeriod.endDate);
+
+                    return date >= startDate && date <= endDate;
+                  }) || false
+                );
+              }}
+              locale={ptBR}
+              classNames={{
+                months: "flex flex-col lg:flex-row gap-4",
+                month: "border border-amber-500 rounded-lg bg-amber-50 p-6",
+                head_cell:
+                  "font-light text-sm px-[5px] md:px-[13px] text-muted-foreground mt-1",
+              }}
+            />
+
+            {date?.from && (
+              <p className="md:mt-2 text-xs text-center md:text-left  md:text-sm text-muted-foreground">
+                Período selecionado:{" "}
+                {format(date.from, "dd/MM/yyyy", { locale: ptBR })}
+                {date.to
+                  ? ` - ${format(date.to, "dd/MM/yyyy", { locale: ptBR })}`
+                  : ""}
+              </p>
+            )}
+          </div>
+
+          <Button
+            onClick={() => router.push("/confirm-rent")}
+            className="w-full py-6 disabled:cursor-not-allowed"
+            disabled={!currentMachine}
+          >
+            Confirmar Reserva
+            <ArrowRight className="ml-2" />
+          </Button>
         </div>
-      </section>
+      </div>
     </main>
   );
 }

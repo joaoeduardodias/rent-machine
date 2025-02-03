@@ -19,6 +19,7 @@ export async function GET(
       machines: {
         every: { id },
       },
+      status: { in: ["aproved", "pending"] },
     },
     select: {
       start_date: true,

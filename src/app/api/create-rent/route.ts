@@ -2,18 +2,45 @@ import { prisma } from "@/lib/prisma";
 import { NextRequest, NextResponse } from "next/server";
 
 type RentMachineBody = {
-  client: string;
-  machineId: string;
   startDate: Date;
   endDate: Date;
+  machineId: string;
+  status?: "aproved" | "pending" | "canceled";
+  client: string;
+  value: number;
+  cep: string;
+  address: string;
+  number: number;
+  paymentMethod: string;
+  message?: string;
 };
 
 export async function POST(request: NextRequest) {
   try {
-    const { endDate, startDate, client, machineId } =
-      (await request.json()) as RentMachineBody;
+    const {
+      endDate,
+      address,
+      cep,
+      number,
+      paymentMethod,
+      status,
+      value,
+      message,
+      startDate,
+      client,
+      machineId,
+    } = (await request.json()) as RentMachineBody;
 
-    if (!endDate || !machineId || !startDate || !client) {
+    if (
+      !endDate ||
+      !machineId ||
+      !startDate ||
+      !client ||
+      !address ||
+      !cep ||
+      !number ||
+      !paymentMethod
+    ) {
       return NextResponse.json({ error: "Missing data" }, { status: 400 });
     }
     const machine = await prisma.machine.findUnique({
@@ -33,6 +60,7 @@ export async function POST(request: NextRequest) {
         { status: 400 }
       );
     }
+
     const conflictingRents = await prisma.rent.findMany({
       where: {
         machines: {
@@ -41,6 +69,7 @@ export async function POST(request: NextRequest) {
         AND: [
           { start_date: { lte: endDate } },
           { end_date: { gte: startDate } },
+          { status: { in: ["aproved", "pending"] } },
         ],
       },
     });
@@ -53,8 +82,16 @@ export async function POST(request: NextRequest) {
         { status: 400 }
       );
     }
-    await prisma.rent.create({
+
+    const rentCreated = await prisma.rent.create({
       data: {
+        address,
+        cep,
+        number,
+        paymentMethod,
+        status: String(status),
+        value,
+        message,
         start_date: startDate,
         end_date: endDate,
         machines: { connect: { id: machineId } },
@@ -63,6 +100,7 @@ export async function POST(request: NextRequest) {
     });
 
     return NextResponse.json({
+      id: rentCreated.id,
       message: "rent created",
     });
   } catch (error) {

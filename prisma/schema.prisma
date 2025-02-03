@@ -20,12 +20,19 @@ model Machine {
 }
 
 model Rent {
-  id         String    @id @default(cuid())
-  start_date DateTime
-  end_date   DateTime
-  createdAt  DateTime  @default(now())
-  client     String
-  machines   Machine[]
+  id            String    @id @default(cuid())
+  start_date    DateTime
+  end_date      DateTime
+  createdAt     DateTime  @default(now())
+  client        String
+  status        String?   @default("pending")
+  address       String
+  cep           String
+  number        Float
+  paymentMethod String
+  value         Float
+  message       String?
+  machines      Machine[]
 
   @@map("rents")
 }

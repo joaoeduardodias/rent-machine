@@ -12,6 +12,7 @@ interface SendOnwerConfirmRentRequest {
   number: string;
   emailOnwer: string;
   name: string;
+  idRent: string;
 }
 
 export async function sendOnwerConfirmRent({
@@ -28,6 +29,7 @@ export async function sendOnwerConfirmRent({
   telephone,
   emailOnwer,
   name,
+  idRent,
 }: SendOnwerConfirmRentRequest) {
   const response = await fetch("/api/send-mail-rent", {
     method: "POST",
@@ -48,6 +50,7 @@ export async function sendOnwerConfirmRent({
       telephone: telephone.replace(/\D/g, ""),
       emailOnwer,
       name,
+      idRent,
     }),
   });
   if (!response.ok) {

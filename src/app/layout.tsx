@@ -33,7 +33,7 @@ export default function RootLayout({
       style={{ scrollBehavior: "smooth" }}
     >
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable}  antialiased`}
       >
         <ReactQueryProvider>
           <AuthProvider>
