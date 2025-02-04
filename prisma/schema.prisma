@@ -26,7 +26,7 @@ model Rent {
   createdAt     DateTime  @default(now())
   client        String
   email         String    @default("")
-  status        String?   @default("pending")
+  status        String    @default("pending")
   address       String
   cep           String
   number        Float

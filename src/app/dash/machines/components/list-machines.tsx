@@ -62,7 +62,7 @@ export function ListMachines() {
                   alt={machine.name}
                   width={60}
                   height={60}
-                  className="rounded-md h-[50px] w-[50px] object-cover"
+                  className="rounded-md h-[50px] w-[50px] object-contain"
                 />
               </TableCell>
               <TableCell className="w-2/4">{machine.name}</TableCell>

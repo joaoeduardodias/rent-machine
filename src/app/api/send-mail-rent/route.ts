@@ -6,13 +6,10 @@ const mailerSend = new MailerSend({
   apiKey: env.API_KEY,
 });
 
-const sentFrom = new Sender(
-  "joao@trial-neqvygmpwxzg0p7w.mlsender.net",
-  "João Dias"
-);
+const sentFrom = new Sender(env.EMAIL_SENDER, env.NAME_SENDER);
 
 interface SendMailProps {
-  emailOnwer: string;
+  emailOwner: string;
   name: string;
   paymentMethod: string;
   installments: number;
@@ -30,7 +27,7 @@ interface SendMailProps {
 
 export async function POST(req: NextRequest) {
   const {
-    emailOnwer,
+    emailOwner,
     name,
     address,
     cep,
@@ -46,11 +43,11 @@ export async function POST(req: NextRequest) {
     idRent,
   } = (await req.json()) as SendMailProps;
 
-  const recipients = [new Recipient(emailOnwer, name)];
+  const recipients = [new Recipient(emailOwner, name)];
 
   const personalization = [
     {
-      email: emailOnwer,
+      email: emailOwner,
       data: {
         name: name,
         rent: {
@@ -77,13 +74,13 @@ export async function POST(req: NextRequest) {
     .setTo(recipients)
     .setReplyTo(sentFrom)
     .setSubject("Nova Proposta de Aluguel")
-    .setTemplateId("3vz9dle2056lkj50")
+    .setTemplateId("0p7kx4xov7249yjr")
     .setPersonalization(personalization);
 
   await mailerSend.email.send(emailParams);
 
   const returnData = {
-    emailOnwer,
+    emailOwner,
     name,
     address,
     cep,

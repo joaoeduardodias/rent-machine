@@ -36,7 +36,6 @@ export default async function PageValuesSendMailClient({
         select: {
           name: true,
         },
-        take: 1,
       },
       message: true,
       number: true,

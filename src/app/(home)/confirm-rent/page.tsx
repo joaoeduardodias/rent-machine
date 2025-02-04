@@ -11,7 +11,6 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
-import { env } from "@/env";
 import { useRentMachine } from "@/hooks/use-rent-machine";
 import { createRent } from "@/http/create-rent";
 import { deleteRent } from "@/http/delete-rent";
@@ -133,8 +132,8 @@ export default function ConfirmRent() {
         machine: currentMachineName,
         startDate,
         endDate,
-        name: env.NEXT_PUBLIC_NAME_OWNER,
-        emailOwner: env.NEXT_PUBLIC_EMAIL_OWNER,
+        name: String(process.env.NEXT_PUBLIC_NAME_OWNER),
+        emailOwner: String(process.env.NEXT_PUBLIC_EMAIL_OWNER),
       };
       const rent = await createRentMutation.mutateAsync({
         address: newData.address,
@@ -390,12 +389,25 @@ export default function ConfirmRent() {
                   <Calendar className="text-yellow-500 mr-2 size-5 md:size-6" />
                   <p className="text-sm md:text-base">
                     Período do aluguel:
-                    <span className="text-muted-foreground text-sm ml-1">
-                      {`${format(startDate!, "dd/MM/yyyy", {
-                        locale: ptBR,
-                      })} -
-                          ${format(endDate!, "dd/MM/yyyy", { locale: ptBR })}`}
-                    </span>
+                    {startDate && (
+                      <time
+                        dateTime={String(startDate)}
+                        className="text-muted-foreground text-sm ml-1"
+                      >
+                        {format(startDate, "dd/MM/yyyy", {
+                          locale: ptBR,
+                        })}
+                      </time>
+                    )}
+                    <span className="text-muted-foreground text-sm"> - </span>
+                    {endDate && (
+                      <time
+                        dateTime={String(endDate)}
+                        className="text-muted-foreground text-sm ml-1"
+                      >
+                        {format(endDate, "dd/MM/yyyy", { locale: ptBR })}
+                      </time>
+                    )}
                   </p>
                 </div>
               </div>

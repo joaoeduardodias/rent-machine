@@ -7,10 +7,7 @@ const mailerSend = new MailerSend({
   apiKey: env.API_KEY,
 });
 
-const sentFrom = new Sender(
-  "joao@trial-neqvygmpwxzg0p7w.mlsender.net",
-  "João Dias"
-);
+const sentFrom = new Sender(env.EMAIL_SENDER, env.NAME_SENDER);
 
 interface SendMailProps {
   value: number;
@@ -47,7 +44,7 @@ export async function POST(req: NextRequest) {
     .setTo(recipients)
     .setReplyTo(sentFrom)
     .setSubject("Orçamento Aluguel")
-    .setTemplateId("351ndgwo6954zqx8")
+    .setTemplateId("z86org8rr214ew13")
     .setPersonalization(personalization);
 
   await mailerSend.email.send(emailParams);

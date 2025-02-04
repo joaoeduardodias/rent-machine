@@ -1,8 +1,8 @@
 interface UpdateRentRequest {
-  status?: "approved" | "pending" | "canceled";
+  id: string;
+  status: "approved" | "pending" | "canceled";
   value?: number;
   message?: string;
-  id: string;
 }
 
 export async function updateRent({
@@ -14,8 +14,8 @@ export async function updateRent({
   const response = await fetch(`/api/update-rent`, {
     method: "PUT",
     body: JSON.stringify({
-      status,
       id,
+      status,
       value,
       message,
     }),

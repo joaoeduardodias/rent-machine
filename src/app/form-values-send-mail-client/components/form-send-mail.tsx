@@ -33,6 +33,10 @@ export function FormSendMail({
   name,
 }: FormSendMailProps) {
   const [inputValue, setInputValue] = useState("");
+  const updateRentMutation = useMutation({
+    mutationKey: ["update-mutation-client"],
+    mutationFn: updateRent,
+  });
 
   const sendMailMutation = useMutation({
     mutationKey: ["send-email-client"],
@@ -42,15 +46,12 @@ export function FormSendMail({
       await updateRentMutation.mutateAsync({
         id: idRent,
         value: 0,
+        status: "pending",
       });
     },
     onSuccess: () => {
       toast.success("E-mail enviado com sucesso!");
     },
-  });
-  const updateRentMutation = useMutation({
-    mutationKey: ["update-mutation-client"],
-    mutationFn: updateRent,
   });
 
   async function handleSubmitMessageConfirmRent(data: FormData) {
@@ -58,6 +59,7 @@ export function FormSendMail({
       await updateRentMutation.mutateAsync({
         id: idRent,
         value: Number(data.value.replace(/\D/g, "")),
+        status: "pending",
       });
 
       await sendMailMutation.mutateAsync({

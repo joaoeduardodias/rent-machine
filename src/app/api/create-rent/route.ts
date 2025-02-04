@@ -93,7 +93,7 @@ export async function POST(request: NextRequest) {
         cep,
         number,
         paymentMethod,
-        status: String(status),
+        status: status as "approved" | "pending" | "canceled",
         value,
         message,
         start_date: startDate,

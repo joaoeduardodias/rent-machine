@@ -3,15 +3,37 @@ import { Button } from "@/components/ui/button";
 import { updateRent } from "@/http/update-rent";
 import { useMutation } from "@tanstack/react-query";
 import { Ban, CircleCheck } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 
 export interface FormApprovedRentProps {
   idRent: string;
 }
 
 export function FormApprovedRent({ idRent }: FormApprovedRentProps) {
+  const router = useRouter();
+
   const approvedRentMutation = useMutation({
     mutationFn: updateRent,
     mutationKey: ["status-update-approved"],
+    onError: () => {
+      toast.error("Erro encontrado, por favor tente novamente.");
+    },
+    onSuccess: () => {
+      toast.success("Aluguel Aprovado com sucesso.");
+      router.push("/");
+    },
+  });
+  const canceledRentMutation = useMutation({
+    mutationFn: updateRent,
+    mutationKey: ["status-update-canceled"],
+    onError: () => {
+      toast.error("Erro encontrado, por favor tente novamente.");
+    },
+    onSuccess: () => {
+      toast.success("Aluguel Cancelado com sucesso.");
+      router.push("/");
+    },
   });
 
   return (
@@ -21,9 +43,9 @@ export function FormApprovedRent({ idRent }: FormApprovedRentProps) {
         <Button
           type="reset"
           onClick={() =>
-            approvedRentMutation.mutateAsync({ id: idRent, status: "canceled" })
+            canceledRentMutation.mutateAsync({ id: idRent, status: "canceled" })
           }
-          disabled={approvedRentMutation.isPending}
+          disabled={canceledRentMutation.isPending}
           className="py-5"
         >
           <Ban className="mr-1" />

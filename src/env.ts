@@ -12,6 +12,8 @@ const envSchema = z.object({
   API_KEY: z.string(),
   NEXT_PUBLIC_NAME_OWNER: z.string(),
   NEXT_PUBLIC_EMAIL_OWNER: z.string(),
+  EMAIL_SENDER: z.string().email(),
+  NAME_SENDER: z.string(),
 });
 
 export const env = envSchema.parse(process.env);

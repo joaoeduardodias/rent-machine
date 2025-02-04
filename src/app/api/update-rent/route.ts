@@ -3,7 +3,7 @@ import { NextRequest, NextResponse } from "next/server";
 
 type RentMachineBody = {
   id: string;
-  status?: "approved" | "pending" | "canceled";
+  status: "approved" | "pending" | "canceled";
   value?: number;
   message?: string;
 };
@@ -13,7 +13,7 @@ export async function PUT(request: NextRequest) {
     const { status, value, message, id } =
       (await request.json()) as RentMachineBody;
 
-    if (!status || !value) {
+    if (!status) {
       return NextResponse.json({ error: "Missing data" }, { status: 400 });
     }
 
@@ -22,7 +22,7 @@ export async function PUT(request: NextRequest) {
         id,
       },
       data: {
-        status: String(status),
+        status,
         value,
         message,
       },
@@ -34,7 +34,7 @@ export async function PUT(request: NextRequest) {
   } catch (error) {
     console.log(error);
     return NextResponse.json(
-      { error: "Error create rent", details: (error as Error).message },
+      { error: "Error update rent", details: (error as Error).message },
       { status: 500 }
     );
   }
