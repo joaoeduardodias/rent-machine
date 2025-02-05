@@ -54,8 +54,7 @@ const paymentMethods = [
 ];
 
 export default function ConfirmRent() {
-  const { currentMachine, startDate, endDate, currentMachineName } =
-    useRentMachine();
+  const { currentMachines, startDate, endDate } = useRentMachine();
   const router = useRouter();
 
   const createRentMutation = useMutation({
@@ -79,10 +78,13 @@ export default function ConfirmRent() {
   });
 
   useEffect(() => {
-    if (!currentMachine) {
+    if (!currentMachines || currentMachines.length <= 0) {
       router.push("/rent");
     }
-  }, [currentMachine, router]);
+  }, [currentMachines, router]);
+  const currentMachinesName = currentMachines
+    .map((machine) => machine.name)
+    .join(", ");
 
   const {
     register,
@@ -124,12 +126,11 @@ export default function ConfirmRent() {
     };
     fetchAddress();
   }
-
   async function handleSubmitMessageConfirmRent(data: FormData) {
     try {
       const newData = {
         ...data,
-        machine: currentMachineName,
+        machine: currentMachines.map((machine) => machine.name).join(", "),
         startDate,
         endDate,
         name: String(process.env.NEXT_PUBLIC_NAME_OWNER),
@@ -142,7 +143,7 @@ export default function ConfirmRent() {
         client: newData.nameClient,
         endDate: newData.endDate!,
         startDate: newData.startDate!,
-        machineId: currentMachine,
+        machines: currentMachines,
         number: Number(newData.number),
         paymentMethod: newData.paymentMethod,
         value: 0,
@@ -379,9 +380,9 @@ export default function ConfirmRent() {
                 <div className="flex items-center">
                   <Truck className="text-yellow-500 mr-2 size-5 md:size-6" />
                   <p className="text-sm md:text-base">
-                    Máquina:
+                    Máquina(s):
                     <span className="text-muted-foreground text-sm ml-1">
-                      {currentMachineName}
+                      {currentMachinesName}
                     </span>
                   </p>
                 </div>

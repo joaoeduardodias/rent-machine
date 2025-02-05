@@ -1,7 +1,9 @@
+import { SelectedMachineType } from "@/types/machine";
+
 interface CreateRentRequest {
   startDate: Date;
   endDate: Date;
-  machineId: string;
+  machines: SelectedMachineType[];
   status?: "approved" | "pending" | "canceled";
   client: string;
   value: number;
@@ -19,7 +21,7 @@ export async function createRent({
   client,
   endDate,
   email,
-  machineId,
+  machines,
   number,
   paymentMethod,
   startDate,
@@ -35,7 +37,7 @@ export async function createRent({
       client,
       email,
       endDate,
-      machineId,
+      machines,
       number,
       paymentMethod,
       startDate,

@@ -6,3 +6,5 @@ export type Machine = {
   // price_per_km: number;
   img_src: string;
 };
+
+export type SelectedMachineType = Machine & { selectedMachineQuantity: number };

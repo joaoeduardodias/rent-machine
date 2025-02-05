@@ -1,10 +1,11 @@
 import { prisma } from "@/lib/prisma";
+import { SelectedMachineType } from "@/types/machine";
 import { NextRequest, NextResponse } from "next/server";
 
 type RentMachineBody = {
   startDate: Date;
   endDate: Date;
-  machineId: string;
+  machines: SelectedMachineType[];
   email: string;
   status?: "approved" | "pending" | "canceled";
   client: string;
@@ -30,12 +31,12 @@ export async function POST(request: NextRequest) {
       message,
       startDate,
       client,
-      machineId,
+      machines,
     } = (await request.json()) as RentMachineBody;
 
     if (
       !endDate ||
-      !machineId ||
+      !machines ||
       !startDate ||
       !client ||
       !address ||
@@ -46,13 +47,17 @@ export async function POST(request: NextRequest) {
     ) {
       return NextResponse.json({ error: "Missing data" }, { status: 400 });
     }
-    const machine = await prisma.machine.findUnique({
-      where: { id: machineId },
+    const machineIds = machines.map((machine) => machine.id);
+    const existingMachines = await prisma.machine.findMany({
+      where: { id: { in: machineIds } },
+      select: {
+        id: true,
+      },
     });
 
-    if (!machine) {
+    if (!existingMachines) {
       return NextResponse.json(
-        { error: "Machine not exists" },
+        { error: "Machines not exists" },
         { status: 400 }
       );
     }
@@ -64,24 +69,61 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const conflictingRents = await prisma.rent.findMany({
-      where: {
-        machines: {
-          every: { id: machineId },
+    const checks = machineIds.map(async (machineId) => {
+      const totalAllocated = await prisma.rent.count({
+        where: {
+          machines: {
+            some: { id: machineId },
+          },
+          AND: [
+            { start_date: { lte: endDate } },
+            { end_date: { gte: startDate } },
+            { status: { in: ["approved", "pending"] } },
+          ],
         },
-        AND: [
-          { start_date: { lte: endDate } },
-          { end_date: { gte: startDate } },
-          { status: { in: ["approved", "pending"] } },
-        ],
-      },
+      });
+
+      const machine = await prisma.machine.findUnique({
+        where: { id: machineId },
+      });
+
+      if (totalAllocated >= (machine?.quantity ?? 0)) {
+        return { machineId, available: false };
+      }
+
+      return { machineId, available: true };
     });
 
-    const totalAllocated = conflictingRents.length;
+    // const conflictingRents = await prisma.rent.findMany({
+    //   where: {
+    //     machines: {
+    //       every: { id: machineId },
+    //     },
+    //     AND: [
+    //       { start_date: { lte: endDate } },
+    //       { end_date: { gte: startDate } },
+    //       { status: { in: ["approved", "pending"] } },
+    //     ],
+    //   },
+    // });
 
-    if (totalAllocated >= machine.quantity) {
+    // const totalAllocated = conflictingRents.length;
+
+    // if (totalAllocated >= machine.quantity) {
+    //   return NextResponse.json(
+    //     { error: "Machine unavailable in period" },
+    //     { status: 400 }
+    //   );
+    // }
+    const results = await Promise.all(checks);
+    const unavailableMachines = results.filter((result) => !result.available);
+
+    if (unavailableMachines.length > 0) {
       return NextResponse.json(
-        { error: "Machine unavailable in period" },
+        {
+          error: "One or more machines are unavailable in the selected period",
+          unavailableMachines,
+        },
         { status: 400 }
       );
     }
@@ -98,7 +140,7 @@ export async function POST(request: NextRequest) {
         message,
         start_date: startDate,
         end_date: endDate,
-        machines: { connect: { id: machineId } },
+        machines: { connect: machineIds.map((id) => ({ id })) },
         client,
       },
     });

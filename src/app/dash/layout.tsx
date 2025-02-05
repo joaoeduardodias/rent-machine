@@ -4,6 +4,7 @@ import { ModalsProvider } from "@/context/modal-context";
 import { Home, LogOut, Truck } from "lucide-react";
 import { signOut } from "next-auth/react";
 import Link from "next/link";
+import { ReactNode } from "react";
 
 const sidebarNavItems = [
   {
@@ -18,11 +19,7 @@ const sidebarNavItems = [
   },
 ];
 
-export default function DashboardLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function DashboardLayout({ children }: { children: ReactNode }) {
   return (
     <div className="flex h-screen bg-gray-100">
       <ModalsProvider>

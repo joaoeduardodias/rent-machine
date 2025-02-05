@@ -1,49 +1,67 @@
 "use client";
 
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from "@/components/ui/command";
 import { Label } from "@/components/ui/label";
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 import { useRentMachine } from "@/hooks/use-rent-machine";
-import { detailsMachine } from "@/http/details-machine";
 import { listMachines } from "@/http/list-machines";
 import { cn } from "@/lib/utils";
+import { Machine, SelectedMachineType } from "@/types/machine";
 import { useQuery } from "@tanstack/react-query";
 import { addDays, format, startOfToday } from "date-fns";
 import { ptBR } from "date-fns/locale";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, Check, X } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { DateRange } from "react-day-picker";
 
 export default function Rent() {
-  const { data: machines, isLoading } = useQuery({
+  const { data: machines } = useQuery({
     queryKey: ["list-machines"],
     queryFn: listMachines,
     staleTime: 60 * 60 * 60,
   });
-  const {
-    currentMachine,
-    setCurrentMachine,
-    setCurrentMachineName,
-    setEndDate,
-    setStartDate,
-  } = useRentMachine();
-
-  const { data } = useQuery({
-    queryKey: [`details-machine-${currentMachine}`],
-    queryFn: () => detailsMachine({ id: currentMachine }),
-    staleTime: 60 * 60 * 60,
-    enabled: !!currentMachine,
-  });
-
   const router = useRouter();
+  const [selectedMachines, setSelectedMachines] = useState<
+    SelectedMachineType[]
+  >([]);
+  const [open, setOpen] = useState(false);
+  const { setCurrentMachines, setEndDate, setStartDate } = useRentMachine();
+
+  function toggleMachineSelected(machine: Machine) {
+    setSelectedMachines((prev) => {
+      const exists = prev.some((m) => m.id === machine.id);
+      return exists
+        ? prev.filter((m) => m.id !== machine.id)
+        : [...prev, { ...machine, selectedMachineQuantity: 1 }];
+    });
+  }
+  useEffect(() => {
+    setCurrentMachines(selectedMachines);
+  }, [selectedMachines, setCurrentMachines]);
+
+  function updateQuantityMachineSelect(idMachine: string, newQuantity: number) {
+    setSelectedMachines((prev) =>
+      prev.map((m) =>
+        m.id === idMachine ? { ...m, selectedMachineQuantity: newQuantity } : m
+      )
+    );
+  }
+
   const [date, setDate] = useState<DateRange | undefined>({
     from: new Date(),
     to: addDays(new Date(), 7),
@@ -54,26 +72,11 @@ export default function Rent() {
   }, []);
 
   useEffect(() => {
-    if (!currentMachine) {
-      setDate(undefined);
-    }
-  }, [currentMachine]);
-
-  useEffect(() => {
     if (date?.from && date.to) {
       setEndDate(date.to);
       setStartDate(date.from);
     }
-    if (data?.machineName) {
-      setCurrentMachineName(data.machineName);
-    }
-  }, [
-    date,
-    setEndDate,
-    setStartDate,
-    setCurrentMachineName,
-    data?.machineName,
-  ]);
+  }, [date, setEndDate, setStartDate]);
 
   return (
     <main className="flex-grow py-5 md:py-10 bg-white">
@@ -82,7 +85,7 @@ export default function Rent() {
           Faça sua Reserva
         </h2>
         <div className="max-w-4xl mx-auto bg-yellow-100 p-4 md:p-8 rounded-lg shadow-lg">
-          <div className="mb-8">
+          {/* <div className="mb-8">
             <Label
               htmlFor="machine"
               className="block text-foreground font-bold mb-2  text-base md:text-lg"
@@ -106,7 +109,7 @@ export default function Rent() {
                 ))}
               </SelectContent>
             </Select>
-          </div>
+          </div> */}
           <div className="mb-8">
             <Label className="block text-foreground font-bold mb-2  text-base md:text-lg">
               Selecione o Período
@@ -117,19 +120,7 @@ export default function Rent() {
               onSelect={setDate}
               numberOfMonths={2}
               className={cn("w-full flex items-center justify-center")}
-              disabled={(date) => {
-                if (!currentMachine || date < startOfToday()) {
-                  return true;
-                }
-                return (
-                  data?.unavailablePeriods?.some((unavailablePeriod) => {
-                    const startDate = new Date(unavailablePeriod.startDate);
-                    const endDate = new Date(unavailablePeriod.endDate);
-
-                    return date >= startDate && date <= endDate;
-                  }) || false
-                );
-              }}
+              disabled={(date) => date < startOfToday()}
               locale={ptBR}
               classNames={{
                 months: "flex flex-col lg:flex-row gap-4",
@@ -150,10 +141,112 @@ export default function Rent() {
             )}
           </div>
 
+          <div className="mb-8">
+            <Label className="block text-foreground font-bold mb-2  text-base md:text-lg">
+              Selecione as Máquinas
+            </Label>
+            <Popover open={open} onOpenChange={setOpen}>
+              <PopoverTrigger className="w-full py-5" asChild>
+                <Button
+                  variant="outline"
+                  role="combobox"
+                  className="w-full justify-between bg-white"
+                  disabled={!date}
+                >
+                  {date
+                    ? selectedMachines.length > 0
+                      ? `${selectedMachines.length} máquina(s) selecionada(s)`
+                      : "Selecione as máquinas"
+                    : "Selecione um período primeiro"}
+
+                  <ArrowRight className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-[--radix-popover-trigger-width] p-0">
+                <Command>
+                  <CommandInput placeholder="Buscar máquina..." />
+                  <CommandList>
+                    <CommandEmpty>Nenhuma máquina encontrada.</CommandEmpty>
+                    <CommandGroup>
+                      {machines?.map((machine) => (
+                        <CommandItem
+                          key={machine.id}
+                          onSelect={() => toggleMachineSelected(machine)}
+                        >
+                          <Check
+                            className={cn(
+                              "mr-2 h-4 w-4",
+                              selectedMachines.some((m) => m.id === machine.id)
+                                ? "opacity-100"
+                                : "opacity-0"
+                            )}
+                          />
+                          <span>{machine.name}</span>
+                          <span className="ml-auto text-sm text-gray-500">
+                            Quantidade: {machine.quantity}
+                          </span>
+                        </CommandItem>
+                      ))}
+                    </CommandGroup>
+                  </CommandList>
+                </Command>
+              </PopoverContent>
+            </Popover>
+            <div className="mt-2 flex flex-wrap gap-2">
+              {selectedMachines.map((machine) => (
+                <Badge key={machine.id} variant="secondary" className="p-2">
+                  <span>{machine.name}</span>
+                  <div className="ml-2 flex items-center">
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="h-5 w-5 p-0 text-gray-500"
+                      onClick={() =>
+                        updateQuantityMachineSelect(
+                          machine.id,
+                          Math.max(1, machine.quantity - 1)
+                        )
+                      }
+                    >
+                      -
+                    </Button>
+                    <span className="mx-1">
+                      {machine.selectedMachineQuantity}
+                    </span>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="h-5 w-5 p-0 text-gray-500"
+                      onClick={() =>
+                        updateQuantityMachineSelect(
+                          machine.id,
+                          Math.min(
+                            machine.quantity,
+                            machine.selectedMachineQuantity + 1
+                          )
+                        )
+                      }
+                    >
+                      +
+                    </Button>
+                  </div>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="ml-2 h-4 w-4 p-0"
+                    onClick={() => toggleMachineSelected(machine)}
+                  >
+                    <X className="h-3 w-3" />
+                  </Button>
+                </Badge>
+              ))}
+            </div>
+          </div>
+
           <Button
             onClick={() => router.push("/confirm-rent")}
             className="w-full py-6 disabled:cursor-not-allowed"
-            disabled={!currentMachine}
+            disabled={!selectedMachines || selectedMachines.length <= 0}
           >
             Confirmar Reserva
             <ArrowRight className="ml-2" />
