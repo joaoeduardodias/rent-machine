@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev --turbopack",
-    "vercel-build": "pnpm prisma migrate deploy",
+    "vercel-build": "pnpm prisma generate && pnpm prisma migrate deploy",
     "build": "next build",
     "start": "next start",
     "lint": "next lint"
