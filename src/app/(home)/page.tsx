@@ -7,34 +7,32 @@ import { ListMachines } from "./components/list-machines";
 export default function Home() {
   return (
     <main className="min-h-screen bg-yellow-50">
-      <section className="bg-yellow-400/70 pt-20 md:py-20">
-        <div className="container mx-auto px-4">
-          <div className="flex flex-col md:flex-row items-center justify-between">
-            <div className="md:w-1/2 mb-8 md:mb-0">
-              <h2 className="text-center md:text-left text-4xl md:text-5xl font-bold mb-4 text-gray-800">
-                Alugue Máquinas de Construção com Facilidade
-              </h2>
-              <p className="text-xl text-center md:text-left mb-8 text-gray-700">
-                Equipamentos de qualidade para sua obra, quando você precisar.
-              </p>
-              <Link
-                href="/rent"
-                className="bg-yellow-500 text-white font-bold py-3 px-6 rounded-full flex md:inline-flex items-center justify-center hover:bg-yellow-600 transition duration-300"
-              >
-                Alugar Agora
-                <ArrowRight className="ml-2" />
-              </Link>
-            </div>
-            <div className="hidden md:inline-block md:w-1/2">
-              <Image
-                src={imgEscavadeira}
-                alt="ilustração escavadeira"
-                priority
-                width="600"
-                height="400"
-                className="w-[600px] h-[400px]"
-              />
-            </div>
+      <section className="bg-yellow-400/70 pt-20 md:py-32">
+        <div className="container mx-auto px-4 flex flex-col md:flex-row items-center justify-between lg:px-0">
+          <div className="md:w-1/3 mb-8 md:mb-0">
+            <h2 className="text-center md:text-left text-4xl md:text-5xl font-bold mb-4">
+              Alugue Máquinas de Construção com Facilidade
+            </h2>
+            <p className="text-xl text-center md:text-left mb-8 text-gray-700">
+              Equipamentos de qualidade para sua obra, quando você precisar.
+            </p>
+            <Link
+              href="/rent"
+              className="bg-yellow-500 text-white font-bold py-3 px-6 rounded-full flex md:inline-flex items-center justify-center hover:bg-yellow-600 transition duration-300"
+            >
+              Alugar Agora
+              <ArrowRight className="ml-2" />
+            </Link>
+          </div>
+          <div className="hidden md:inline-block">
+            <Image
+              src={imgEscavadeira}
+              alt="ilustração escavadeira"
+              priority
+              width="600"
+              height="400"
+              className="w-[600px] h-[400px]"
+            />
           </div>
         </div>
       </section>
@@ -42,13 +40,13 @@ export default function Home() {
       <section id="about" className="py-8 md:py-20 bg-white">
         <div className="container mx-auto px-4">
           <h3 className="text-3xl font-bold text-foreground mb-8 text-center">
-            Sobre a RentMachine
+            Sobre a Rent Machine
           </h3>
           <div className="flex flex-col md:flex-row items-center justify-between">
             <div className="md:w-1/2 mb-8 md:mb-0">
               <Image
                 src="https://fakeimg.pl/600x400?text=sua+empresa"
-                alt="Equipe RentMachine"
+                alt="Equipe Rent Machine"
                 width={600}
                 height={400}
                 className="rounded-lg shadow-lg"
@@ -56,7 +54,7 @@ export default function Home() {
             </div>
             <div className="md:w-1/2 md:pl-8">
               <p className="text-lg text-muted-foreground mb-4 text-center md:text-justify">
-                A RentMachine é líder no mercado de aluguel de máquinas para
+                A Rent Machine é líder no mercado de aluguel de máquinas para
                 construção civil. Com anos de experiência, oferecemos
                 equipamentos de alta qualidade e um serviço excepcional para
                 garantir o sucesso do seu projeto.
@@ -87,7 +85,7 @@ export default function Home() {
           </h3>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             <div className="bg-yellow-100 p-6 rounded-lg shadow-md">
-              <Truck className="w-12 h-12 text-yellow-500 mb-4 mx-auto" />
+              <Truck className="size-12 text-yellow-500 mb-4 mx-auto" />
               <h4 className="text-xl font-semibold mb-2 text-center">
                 Entrega Rápida
               </h4>
@@ -97,7 +95,7 @@ export default function Home() {
               </p>
             </div>
             <div className="bg-yellow-100 p-6 rounded-lg shadow-md">
-              <Calendar className="w-12 h-12 text-yellow-500 mb-4 mx-auto" />
+              <Calendar className="size-12 text-yellow-500 mb-4 mx-auto" />
               <h4 className="text-xl font-semibold mb-2 text-center">
                 Flexibilidade
               </h4>
@@ -107,7 +105,7 @@ export default function Home() {
               </p>
             </div>
             <div className="bg-yellow-100 p-6 rounded-lg shadow-md">
-              <Shield className="w-12 h-12 text-yellow-500 mb-4 mx-auto" />
+              <Shield className="size-12 text-yellow-500 mb-4 mx-auto" />
               <h4 className="text-xl font-semibold mb-2 text-center">
                 Equipamentos Seguros
               </h4>

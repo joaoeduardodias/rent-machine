@@ -1,12 +1,10 @@
 "use client";
 
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
 import {
   Command,
   CommandEmpty,
-  CommandGroup,
   CommandInput,
   CommandItem,
   CommandList,
@@ -17,6 +15,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import { Table, TableBody, TableCell, TableHeader, TableRow } from "@/components/ui/table";
 import { useRentMachine } from "@/hooks/use-rent-machine";
 import { listMachines } from "@/http/list-machines";
 import { cn } from "@/lib/utils";
@@ -24,7 +23,7 @@ import { Machine, SelectedMachineType } from "@/types/machine";
 import { useQuery } from "@tanstack/react-query";
 import { addDays, format, startOfToday } from "date-fns";
 import { ptBR } from "date-fns/locale";
-import { ArrowRight, Check, X } from "lucide-react";
+import { ArrowRight, Check, Minus, Plus } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { DateRange } from "react-day-picker";
@@ -81,37 +80,10 @@ export default function Rent() {
   return (
     <main className="flex-grow py-5 md:py-10 bg-white">
       <div className="container mx-auto px-4">
-        <h2 className="text-2xl md:text-4xl font-bold text-gray-800 mb-6 md:mb-12 text-center">
-          Faça sua Reserva
-        </h2>
-        <div className="max-w-4xl mx-auto bg-yellow-100 p-4 md:p-8 rounded-lg shadow-lg">
-          {/* <div className="mb-8">
-            <Label
-              htmlFor="machine"
-              className="block text-foreground font-bold mb-2  text-base md:text-lg"
-            >
-              Selecione a Máquina
-            </Label>
 
-            <Select
-              disabled={isLoading}
-              value={currentMachine}
-              onValueChange={(value) => setCurrentMachine(value)}
-            >
-              <SelectTrigger className="w-full py-6">
-                <SelectValue placeholder="Selecione a máquina" />
-              </SelectTrigger>
-              <SelectContent>
-                {machines?.map((machine) => (
-                  <SelectItem key={machine.id} value={machine.id}>
-                    {machine.name}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div> */}
+        <div className="max-w-4xl mx-auto bg-yellow-100 p-2 md:p-8 rounded-lg shadow-lg">
           <div className="mb-8">
-            <Label className="block text-foreground font-bold mb-2  text-base md:text-lg">
+            <Label className="inline-block text-foreground font-bold mb-2 text-base md:text-lg">
               Selecione o Período
             </Label>
             <Calendar
@@ -119,14 +91,16 @@ export default function Rent() {
               selected={date}
               onSelect={setDate}
               numberOfMonths={2}
-              className={cn("w-full flex items-center justify-center")}
+              className={cn("w-full h-full flex items-center justify-center")}
               disabled={(date) => date < startOfToday()}
               locale={ptBR}
+              // months: "flex w-full flex-col space-y-4 sm:flex-row sm:space-x-4 sm:space-y-0 flex-1",
               classNames={{
-                months: "flex flex-col lg:flex-row gap-4",
-                month: "border border-amber-500 rounded-lg bg-amber-50 p-6",
-                head_cell:
-                  "font-light text-sm px-[5px] md:px-[13px] text-muted-foreground mt-1",
+                months: "flex w-full flex-col space-y-4 lg:flex-row lg:space-y-0 lg:space-x-4",
+                month: "w-full flex flex-col border border-amber-500 rounded-lg bg-amber-50 p-4",
+                table: "w-full  h-full border-collapse space-y-1",
+                head_row: "",
+                row: "w-full mt-2",
               }}
             />
 
@@ -167,80 +141,97 @@ export default function Rent() {
                   <CommandInput placeholder="Buscar máquina..." />
                   <CommandList>
                     <CommandEmpty>Nenhuma máquina encontrada.</CommandEmpty>
-                    <CommandGroup>
-                      {machines?.map((machine) => (
+                    {machines?.map((machine) => {
+                      const selectedMachine = selectedMachines.find(
+                        (m) => m.id === machine.id
+                      );
+                      return (
                         <CommandItem
                           key={machine.id}
                           onSelect={() => toggleMachineSelected(machine)}
+                          className="flex items-center justify-between h-12 px-4 hover:bg-yellow-50 cursor-pointer"
                         >
-                          <Check
-                            className={cn(
-                              "mr-2 h-4 w-4",
-                              selectedMachines.some((m) => m.id === machine.id)
-                                ? "opacity-100"
-                                : "opacity-0"
-                            )}
-                          />
-                          <span>{machine.name}</span>
-                          <span className="ml-auto text-sm text-gray-500">
-                            Quantidade: {machine.quantity}
-                          </span>
+                          <div className="flex items-center">
+                            <Check
+                              className={cn(
+                                "mr-2 h-4 w-4 text-yellow-500",
+                                selectedMachine ? "opacity-100" : "opacity-0"
+                              )}
+                            />
+                            <span className="font-medium">{machine.name}</span>
+                          </div>
+                          {selectedMachine ? (
+                            <div className="flex items-center space-x-2 bg-yellow-100 rounded-full px-2 py-1">
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                className="size-6 rounded-full p-0 hover:bg-yellow-200"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  updateQuantityMachineSelect(
+                                    machine.id,
+                                    Math.max(
+                                      0,
+                                      selectedMachine.selectedMachineQuantity -
+                                      1
+                                    )
+                                  );
+                                }}
+                              >
+                                <Minus className="h-3 w-3 text-yellow-600" />
+                              </Button>
+                              <span className="text-sm font-medium text-yellow-700 w-4 text-center">
+                                {selectedMachine.selectedMachineQuantity}
+                              </span>
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                className="size-6 rounded-full p-0 hover:bg-yellow-200"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  updateQuantityMachineSelect(
+                                    machine.id,
+                                    Math.min(
+                                      machine.quantity,
+                                      selectedMachine.selectedMachineQuantity +
+                                      1
+                                    )
+                                  );
+                                }}
+                              >
+                                <Plus className="h-3 w-3 text-yellow-600" />
+                              </Button>
+                            </div>
+                          ) : (
+                            <span className="text-sm text-gray-500">
+                              Quantidade: {machine.quantity}
+                            </span>
+                          )}
                         </CommandItem>
-                      ))}
-                    </CommandGroup>
+                      );
+                    })}
                   </CommandList>
                 </Command>
               </PopoverContent>
             </Popover>
-            <div className="mt-2 flex flex-wrap gap-2">
-              {selectedMachines.map((machine) => (
-                <Badge key={machine.id} variant="secondary" className="p-2">
-                  <span>{machine.name}</span>
-                  <div className="ml-2 flex items-center">
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      className="h-5 w-5 p-0 text-gray-500"
-                      onClick={() =>
-                        updateQuantityMachineSelect(
-                          machine.id,
-                          Math.max(1, machine.quantity - 1)
-                        )
-                      }
-                    >
-                      -
-                    </Button>
-                    <span className="mx-1">
-                      {machine.selectedMachineQuantity}
-                    </span>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      className="h-5 w-5 p-0 text-gray-500"
-                      onClick={() =>
-                        updateQuantityMachineSelect(
-                          machine.id,
-                          Math.min(
-                            machine.quantity,
-                            machine.selectedMachineQuantity + 1
-                          )
-                        )
-                      }
-                    >
-                      +
-                    </Button>
-                  </div>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    className="ml-2 h-4 w-4 p-0"
-                    onClick={() => toggleMachineSelected(machine)}
-                  >
-                    <X className="h-3 w-3" />
-                  </Button>
-                </Badge>
-              ))}
-            </div>
+            {selectedMachines.length > 0 && (
+              <Table className="mt-2 bg-white shadow-sm p-4 rounded-md">
+                <TableHeader>
+                  <TableRow>
+                    <TableCell>Máquina</TableCell>
+                    <TableCell>Quantidade</TableCell>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {selectedMachines.map((machine) => (
+                    <TableRow key={machine.id}>
+                      <TableCell>{machine.name}</TableCell>
+                      <TableCell>{machine.selectedMachineQuantity}</TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            )}
           </div>
 
           <Button

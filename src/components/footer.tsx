@@ -4,16 +4,16 @@ import Link from "next/link";
 export function Footer() {
   return (
     <footer className="bg-gray-800 text-white py-16">
-      <div className="container  px-4 flex flex-wrap justify-center gap-16 items-start">
-        <div className="w-full  md:max-w-72 mb-6 md:mb-0 text-center">
-          <h5 className="text-xl font-bold mb-4">ConstrutAluga</h5>
+      <div className="container  mx-auto px-4 flex flex-wrap justify-center gap-16 items-start">
+        <div className="w-full md:max-w-72 mb-6 md:mb-0 text-center">
+          <h5 className="text-xl font-bold mb-4">Rent Machine</h5>
           <p className="text-gray-400">
             Soluções de aluguel para sua construção.
           </p>
         </div>
         <div className="w-full md:max-w-72 mb-6 md:mb-0 text-center">
           <h5 className="text-xl font-bold mb-4">Contato</h5>
-          <p className="text-gray-400">Email: contato@construtaluga.com</p>
+          <p className="text-gray-400">Email: contato@rentmachine.com</p>
           <p className="text-gray-400">Telefone: (11) 1234-5678</p>
         </div>
         <div className="w-full md:max-w-60 text-center">

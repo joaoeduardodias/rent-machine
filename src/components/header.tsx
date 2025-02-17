@@ -14,7 +14,7 @@ export function Header() {
       <div className="container mx-auto flex justify-between items-center">
         <Link
           href="/"
-          className="text-2xl font-bold text-accent  cursor-pointer"
+          className="text-2xl font-bold text-accent cursor-pointer"
         >
           Rent Machine
         </Link>
