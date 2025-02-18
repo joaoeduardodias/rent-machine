@@ -70,16 +70,16 @@ export async function POST(request: NextRequest) {
     }
 
     const checks = machineIds.map(async (machineId) => {
-      const totalAllocated = await prisma.rent.count({
+      const totalAllocated = await prisma.rentMachine.count({
         where: {
-          machines: {
-            some: { id: machineId },
+          machine_id: machineId,
+          rent: {
+            AND: [
+              { start_date: { lte: endDate } },
+              { end_date: { gte: startDate } },
+              { status: { in: ["approved", "pending"] } },
+            ],
           },
-          AND: [
-            { start_date: { lte: endDate } },
-            { end_date: { gte: startDate } },
-            { status: { in: ["approved", "pending"] } },
-          ],
         },
       });
 
@@ -94,27 +94,6 @@ export async function POST(request: NextRequest) {
       return { machineId, available: true };
     });
 
-    // const conflictingRents = await prisma.rent.findMany({
-    //   where: {
-    //     machines: {
-    //       every: { id: machineId },
-    //     },
-    //     AND: [
-    //       { start_date: { lte: endDate } },
-    //       { end_date: { gte: startDate } },
-    //       { status: { in: ["approved", "pending"] } },
-    //     ],
-    //   },
-    // });
-
-    // const totalAllocated = conflictingRents.length;
-
-    // if (totalAllocated >= machine.quantity) {
-    //   return NextResponse.json(
-    //     { error: "Machine unavailable in period" },
-    //     { status: 400 }
-    //   );
-    // }
     const results = await Promise.all(checks);
     const unavailableMachines = results.filter((result) => !result.available);
 
@@ -140,8 +119,16 @@ export async function POST(request: NextRequest) {
         message,
         start_date: startDate,
         end_date: endDate,
-        machines: { connect: machineIds.map((id) => ({ id })) },
         client,
+        RentMachine: {
+          create: machines.map(({ id, selectedMachineQuantity }) => ({
+            machine: { connect: { id } },
+            quantity: selectedMachineQuantity,
+          })),
+        },
+      },
+      include: {
+        RentMachine: true,
       },
     });
 

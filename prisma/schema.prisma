@@ -8,34 +8,47 @@ datasource db {
 }
 
 model Machine {
-  id       String  @id @default(cuid())
-  name     String
-  fileKey  String
-  img_src  String
-  quantity Int
-  rent_id  String?
-  rents    Rent?   @relation(fields: [rent_id], references: [id])
+  id          String        @id @default(cuid())
+  name        String
+  fileKey     String
+  img_src     String
+  quantity    Int
+  rent_id     String?
+  RentMachine RentMachine[]
 
   @@map("machines")
 }
 
 model Rent {
-  id            String    @id @default(cuid())
+  id            String        @id @default(cuid())
   start_date    DateTime
   end_date      DateTime
-  createdAt     DateTime  @default(now())
+  createdAt     DateTime      @default(now())
   client        String
-  email         String    @default("")
-  status        String    @default("pending")
+  email         String        @default("")
+  status        String        @default("pending")
   address       String
   cep           String
   number        Float
   paymentMethod String
   value         Float
   message       String?
-  machines      Machine[]
+  RentMachine   RentMachine[]
 
   @@map("rents")
+}
+
+model RentMachine {
+  id         String @id @default(cuid())
+  rent_id    String
+  machine_id String
+  quantity   Int
+
+  rent    Rent    @relation(fields: [rent_id], references: [id], onDelete: Cascade)
+  machine Machine @relation(fields: [machine_id], references: [id], onDelete: Cascade)
+
+  @@unique([rent_id, machine_id])
+  @@map("rent_machines")
 }
 
 model User {

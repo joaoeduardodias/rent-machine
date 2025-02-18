@@ -21,6 +21,7 @@ export default async function PageValuesSendMailClient({
 }: PageValuesSendMailClientProps) {
   const { id } = await params;
 
+
   const rent = await prisma.rent.findUnique({
     where: {
       id,
@@ -32,20 +33,26 @@ export default async function PageValuesSendMailClient({
       end_date: true,
       id: true,
       email: true,
-      machines: {
-        select: {
-          name: true,
-        },
-      },
       message: true,
       number: true,
       paymentMethod: true,
       start_date: true,
+      RentMachine: {
+        select: {
+          quantity: true,
+          machine: {
+            select: {
+              name: true,
+            },
+          },
+        },
+      },
     },
   });
 
+
   if (!rent) <p>Nenhum aluguel encontrado</p>;
-  const machine = rent?.machines.map((item) => item.name);
+  const machine = rent?.RentMachine.map((item) => `${item.quantity} - ${item.machine.name}`);
 
   return (
     <main className="flex-grow py-5 md:py-10 bg-white">
@@ -69,7 +76,7 @@ export default async function PageValuesSendMailClient({
                 <div className="flex items-center">
                   <Truck className="text-yellow-500 mr-2 size-5 md:size-6" />
                   <p className="text-sm md:text-base">
-                    Máquina:
+                    Máquinas:
                     <span className="text-muted-foreground text-sm ml-1">
                       {String(machine)}
                     </span>
@@ -82,14 +89,14 @@ export default async function PageValuesSendMailClient({
                     <span className="text-muted-foreground text-sm ml-1">
                       {rent?.start_date
                         ? format(rent?.start_date, "dd/MM/yyyy", {
-                            locale: ptBR,
-                          })
+                          locale: ptBR,
+                        })
                         : ""}{" "}
                       -{" "}
                       {rent?.end_date
                         ? format(rent?.end_date, "dd/MM/yyyy", {
-                            locale: ptBR,
-                          })
+                          locale: ptBR,
+                        })
                         : ""}
                     </span>
                   </p>

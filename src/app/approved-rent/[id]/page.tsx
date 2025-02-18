@@ -1,5 +1,4 @@
 import { prisma } from "@/lib/prisma";
-import { formatCurrency } from "@/utils/format-currency";
 import { FormApprovedRent } from "../components/form-approved-rent";
 
 interface PageApprovedRentProps {
@@ -18,6 +17,7 @@ export default async function PageApprovedRent({
     select: {
       status: true,
       value: true,
+
     },
   });
 
@@ -30,12 +30,13 @@ export default async function PageApprovedRent({
           Aprovar Orçamento
         </h2>
         <div className="max-w-4xl mx-auto bg-yellow-100 p-4 md:p-8 rounded-lg shadow-lg space-y-2">
-          <div className="bg-white shadow-lg rounded-lg">
+
+          <FormApprovedRent idRent={id} value={String(rent?.value)} />
+          {/* <div className="bg-white rounded-lg">
             <div className="flex items-center gap-2 p-4">
-              Valor Total: <span>{formatCurrency(String(rent?.value))}</span>
+              Valor Total: <span>{formatCurrency(String())}</span>
             </div>
-          </div>
-          <FormApprovedRent idRent={id} />
+          </div> */}
         </div>
       </div>
     </main>

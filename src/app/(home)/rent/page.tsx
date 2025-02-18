@@ -35,6 +35,7 @@ export default function Rent() {
     staleTime: 60 * 60 * 60,
   });
   const router = useRouter();
+
   const [selectedMachines, setSelectedMachines] = useState<
     SelectedMachineType[]
   >([]);
@@ -94,9 +95,8 @@ export default function Rent() {
               className={cn("w-full h-full flex items-center justify-center")}
               disabled={(date) => date < startOfToday()}
               locale={ptBR}
-              // months: "flex w-full flex-col space-y-4 sm:flex-row sm:space-x-4 sm:space-y-0 flex-1",
               classNames={{
-                months: "flex w-full flex-col space-y-4 lg:flex-row lg:space-y-0 lg:space-x-4",
+                months: "flex w-full flex-col  space-y-4 lg:flex-row lg:space-y-0 lg:space-x-4",
                 month: "w-full flex flex-col border border-amber-500 rounded-lg bg-amber-50 p-4",
                 table: "w-full  h-full border-collapse space-y-1",
                 head_row: "",

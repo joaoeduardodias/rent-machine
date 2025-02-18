@@ -82,9 +82,7 @@ export default function ConfirmRent() {
       router.push("/rent");
     }
   }, [currentMachines, router]);
-  const currentMachinesName = currentMachines
-    .map((machine) => machine.name)
-    .join(", ");
+
 
   const {
     register,
@@ -130,7 +128,7 @@ export default function ConfirmRent() {
     try {
       const newData = {
         ...data,
-        machine: currentMachines.map((machine) => machine.name).join(", "),
+        machine: currentMachines.map((machine) => `${machine.selectedMachineQuantity} - ${machine.name}`).join(", "),
         startDate,
         endDate,
         name: String(process.env.NEXT_PUBLIC_NAME_OWNER),
@@ -382,7 +380,7 @@ export default function ConfirmRent() {
                   <p className="text-sm md:text-base">
                     Máquina(s):
                     <span className="text-muted-foreground text-sm ml-1">
-                      {currentMachinesName}
+                      {currentMachines.map(machine => `${machine.selectedMachineQuantity} - ${machine.name}`).join(", ")}
                     </span>
                   </p>
                 </div>
